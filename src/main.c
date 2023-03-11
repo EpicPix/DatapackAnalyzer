@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
   if (!zip)
     return 1;
 
-  load_files(zip);
+  printf("pack.mcmeta: %s\n", load_file(zip, "pack.mcmeta"));
 
   zip_close(zip);
   return 0;

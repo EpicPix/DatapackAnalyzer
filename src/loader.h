@@ -1,3 +1,3 @@
 #include <zip.h>
 
-void load_files(zip_t *zip);
+char *load_file(zip_t *zip, const char *file);
