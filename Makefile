@@ -6,4 +6,4 @@ clean:
 SRC = $(wildcard src/*.c)
 
 analyzer: $(SRC)
-	gcc -o $@ $^
+	gcc -o $@ $^ -lzip
