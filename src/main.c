@@ -13,15 +13,12 @@ int main(int argc, char **argv) {
   if (!zip)
     return 1;
 
-  char *mcmeta = load_file(zip, "pack.mcmeta");
-  struct json_object *mcmeta_json = json_tokener_parse(mcmeta);
-  free(mcmeta);
-
-  struct json_object *pack_json = json_object_object_get(mcmeta_json, "pack");
-  struct json_object *pack_format_json =
-      json_object_object_get(pack_json, "pack_format");
-  printf("pack format: %ld\n", json_object_get_int64(pack_format_json));
-  json_object_put(mcmeta_json);
+  int pack_format = get_pack_format(zip);
+  if (pack_format == -1) {
+    printf("Invalid pack format: %d\n", pack_format);
+  } else {
+    printf("Pack format: %d\n", pack_format);
+  }
 
   zip_close(zip);
   return 0;
