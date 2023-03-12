@@ -11,17 +11,10 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
   for(int i = 0; i<results->version_count; i++) {
     results->version_results[i].version = &VERSIONS[i];
     results->version_results[i].diagnostics_alloc = 8;
-    results->version_results[i].diagnostics = malloc(sizeof(struct diagnostics_info) * 8);
+    results->version_results[i].diagnostics = malloc(8 * sizeof(struct diagnostics_info));
   }
 
   int pack_format = get_pack_format(zip);
-  if (pack_format == -1) {
-    printf("Invalid pack format: %d\n", pack_format);
-  } else {
-    printf("Pack format: %d\n", pack_format);
-  }
-
-
   analyzer_add_diagnostic_range_if(results, version->datapack_format != pack_format, diagnostic_create(diagnostic_warn, "Pack format does not match"));
 
   return results;
@@ -62,8 +55,8 @@ void analyzer_add_diagnostic_range_index(struct analyzer_results *results, int m
 
 void analyzer_add_diagnostic_specific(struct datapack_results* result, struct diagnostics_info* diagnostic) {
   if(result->diagnostics_alloc <= result->diagnostics_count) {
-    result->diagnostics = realloc(result->diagnostics, result->diagnostics_alloc * 2);
     result->diagnostics_alloc *= 2;
+    result->diagnostics = realloc(result->diagnostics, result->diagnostics_alloc * sizeof(struct diagnostics_info));
   }
   memcpy(&result->diagnostics[result->diagnostics_count++], diagnostic, sizeof(struct diagnostics_info));
 };
