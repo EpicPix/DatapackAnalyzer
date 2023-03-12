@@ -26,7 +26,8 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
   char **result;
   int count = list_namespaces(zip, &result);
   for(int i = 0; i<count; i++) {
-    printf("%s %ld\n", result[i], strlen(result[i]));
+//    printf("%s %ld %ld\n", result[i], strlen(result[i]), namespace_file_size(zip, result[i], "tags/"));
+//    char* content = namespace_file_content(zip, result[i], "tags/functions/load.json");
 
     free(result[i]);
   }

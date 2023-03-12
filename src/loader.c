@@ -47,7 +47,7 @@ int get_pack_format(zip_t *zip) {
 
 int64_t file_size(zip_t *zip, const char* name) {
   zip_stat_t stat;
-  if(zip_stat(zip, "data/", 0, &stat) != 0)
+  if(zip_stat(zip, name, 0, &stat) != 0)
     return -1;
 
   if((stat.valid & ZIP_STAT_REQUIRED) == ZIP_STAT_REQUIRED)
