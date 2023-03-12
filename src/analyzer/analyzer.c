@@ -30,8 +30,8 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
   for(int i = 0; i<count; i++) {
     char* namespace = result[i];
 
-    if(namespace_file_exists(zip, namespace, "damage_typw/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'damage_typw' data", NULL, -1, version_index("23w06a"));
+    if(namespace_file_exists(zip, namespace, "damage_type/")) {
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'damage_type' data", NULL, -1, version_index("23w06a"));
     }
 
     if(namespace_file_exists(zip, namespace, "chat_type/")) {
@@ -52,6 +52,23 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
 
     if(namespace_file_exists(zip, namespace, "tags/")) {
       diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'tags' data", NULL, -1, version_index("17w49a"));
+
+      if(namespace_file_exists(zip, namespace, "tags/entity_types/")) {
+        diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'entity_types' tag data", NULL, version_index("17w49a"), version_index("18w43a"));
+      }
+
+      if(namespace_file_exists(zip, namespace, "tags/functions/")) {
+        diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'functions' tag data", NULL, version_index("17w49a"), version_index("17w49b"));
+      }
+
+      if(namespace_file_exists(zip, namespace, "tags/blocks/")) {
+
+      }
+
+      if(namespace_file_exists(zip, namespace, "tags/items/")) {
+
+      }
+
     }
 
     if(namespace_file_exists(zip, namespace, "recipes/")) {
