@@ -25,6 +25,8 @@ fwrite(&value_input, 1, 8, FILE); \
 
 #define writestr(FILE, VALUE) { \
   const char* val = VALUE; \
-  write16(FILE, strlen(val)); \
-  fwrite(val, 1, strlen(val), FILE); \
+  if(val != NULL) { \
+    write16(FILE, strlen(val)); \
+    fwrite(val, 1, strlen(val), FILE); \
+  } else write16(FILE, 0); \
 }

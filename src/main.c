@@ -14,7 +14,9 @@ void write_result(struct datapack_results* results, FILE* file) {
       struct diagnostics_info* diagnostic = &results->diagnostics[j];
       write8(file, diagnostic->type);
       writestr(file, diagnostic->message);
+      free(diagnostic->message);
       writestr(file, diagnostic->source.filename);
+      if(diagnostic->source.filename) free(diagnostic->source.filename);
       write32(file, diagnostic->source.line);
       write32(file, diagnostic->source.column);
     }
@@ -45,7 +47,7 @@ int main(int argc, char **argv) {
       printf("Analyze version: %s (%d)\n", datapack_result->version->version_name, datapack_result->diagnostics_count);
       for(int j = 0; j<datapack_result->diagnostics_count; j++) {
         struct diagnostics_info* diagnostic = &datapack_result->diagnostics[j];
-        if(strlen(diagnostic->source.filename) != 0) {
+        if(diagnostic->source.filename != NULL) {
           if(diagnostic->source.line != -1) {
             if(diagnostic->source.column != -1) {
               printf("- %d: %s, %s:%d:%d\n", diagnostic->type, diagnostic->message, diagnostic->source.filename, diagnostic->source.line, diagnostic->source.column);
@@ -55,9 +57,11 @@ int main(int argc, char **argv) {
           }else {
             printf("- %d: %s, %s\n", diagnostic->type, diagnostic->message, diagnostic->source.filename);
           }
+          free(diagnostic->source.filename);
         }else {
           printf("- %d: %s\n", diagnostic->type, diagnostic->message);
         }
+        free(diagnostic->message);
       }
     }
     free(datapack_result->diagnostics);
