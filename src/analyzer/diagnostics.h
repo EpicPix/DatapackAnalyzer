@@ -23,3 +23,12 @@ struct diagnostics_info* diagnostic_create_source(enum diagnostic_type type, con
 struct diagnostics_info* diagnostic_create_source_dyn(enum diagnostic_type type, char* message, char* file);
 struct diagnostics_info* diagnostic_create_source_loc(enum diagnostic_type type, const char* message, const char* file, int line, int column);
 struct diagnostics_info* diagnostic_create_source_loc_dyn(enum diagnostic_type type, char* message, char* file, int line, int column);
+
+#define diagnostic_clean(DIAGNOSTIC, OPERATION) \
+{ \
+  struct diagnostics_info* diagnostic = (DIAGNOSTIC); \
+  OPERATION; \
+  free(diagnostic->message); \
+  if(diagnostic->source.filename) free(diagnostic->source.filename); \
+  free(diagnostic); \
+}
