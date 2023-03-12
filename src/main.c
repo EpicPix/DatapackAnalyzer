@@ -17,8 +17,13 @@ int main(int argc, char **argv) {
 
   struct analyzer_results *results = analyze_datapack(zip);
   for(int i = 0; i<results->version_count; i++) {
-    printf("Analyze version: %s\n", results->version_results[i].version);
-    free(results->version_results[i].diagnostics);
+    struct datapack_results* datapack_result = &results->version_results[i];
+    printf("Analyze version: %s (%d)\n", datapack_result->version->version_name, datapack_result->diagnostics_count);
+    for(int j = 0; j<datapack_result->diagnostics_count; j++) {
+      struct diagnostics_info* diagnostic = &datapack_result->diagnostics[j];
+      printf("- %d: %s\n", diagnostic->type, diagnostic->message);
+    }
+    free(datapack_result->diagnostics);
   }
   free(results->version_results);
   free(results);

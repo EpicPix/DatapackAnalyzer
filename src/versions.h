@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdbool.h>
 
 struct version_info {
@@ -9,3 +11,5 @@ struct version_info {
 
 extern const struct version_info VERSIONS[];
 extern const int VERSION_COUNT;
+
+int version_index(const char* name);

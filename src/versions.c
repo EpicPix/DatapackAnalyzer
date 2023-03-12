@@ -1,6 +1,15 @@
 #include "versions.h"
+#include <string.h>
 
-// clang-format off
+int version_index(const char* name) {
+  for(int i = 0; i<VERSION_COUNT; i++) {
+    if(strcmp(VERSIONS[i].version_name, name) == 0) {
+      return VERSIONS[i].index;
+    }
+  }
+  return -1;
+}
+
 #define VERSION(NAME, RELEASE, DATAPACK_FORMAT, INDEX) { .version_name = NAME, .datapack_format = DATAPACK_FORMAT, .index = INDEX, .release = RELEASE }
 
 const struct version_info VERSIONS[] = {
