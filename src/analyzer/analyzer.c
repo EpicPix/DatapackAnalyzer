@@ -30,6 +30,26 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
   for(int i = 0; i<count; i++) {
     char* namespace = result[i];
 
+    if(namespace_file_exists(zip, namespace, "damage_typw/")) {
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'damage_typw' data", NULL, -1, version_index("23w06a"));
+    }
+
+    if(namespace_file_exists(zip, namespace, "chat_type/")) {
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'chat_type' data", NULL, -1, version_index("22w42a"));
+    }
+
+    if(namespace_file_exists(zip, namespace, "item_modifiers/")) {
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'item_modifiers' data", NULL, -1, version_index("20w46a"));
+    }
+
+    if(namespace_file_exists(zip, namespace, "worldgen/")) {
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'worldgen' data", NULL, -1, version_index("20w28a"));
+    }
+
+    if(namespace_file_exists(zip, namespace, "predicates/")) {
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'predicates' data", NULL, -1, version_index("19w38a"));
+    }
+
     if(namespace_file_exists(zip, namespace, "tags/")) {
       diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'tags' data", NULL, -1, version_index("17w49a"));
     }
