@@ -30,12 +30,12 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
 
     if(namespace_file_exists(zip, namespace, "damage_type/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'damage_type' data"), namespace_file_string(namespace, "damage_type/"), -1, version_index("23w06a"));
-      load_damage_type(zip, namespace, analysis, results);
+      load_damage_types(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "chat_type/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'chat_type' data"), namespace_file_string(namespace, "chat_type/"), -1, version_index("22w42a"));
-      load_chat_type(zip, namespace, analysis, results);
+      load_chat_types(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "item_modifiers/")) {
@@ -45,7 +45,7 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
 
     if(namespace_file_exists(zip, namespace, "worldgen/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'worldgen' data"), namespace_file_string(namespace, "worldgen/"), -1, version_index("20w28a"));
-      load_worldgen(zip, namespace, analysis, results);
+      load_worldgens(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "predicates/")) {
