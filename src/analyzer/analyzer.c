@@ -21,7 +21,7 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
 };
 
 struct diagnostics_info* diagnostic_create(enum diagnostic_type type, const char* message) {
-  return diagnostic_create_source(type, message, NULL);
+  return diagnostic_create_source(type, message, "");
 }
 
 struct diagnostics_info* diagnostic_create_source(enum diagnostic_type type, const char* message, const char* file) {
