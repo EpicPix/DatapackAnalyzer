@@ -1,4 +1,5 @@
 #pragma once
+#include "analyzer_diagnostics.h"
 
 enum diagnostic_type {
   diagnostic_info = 0,
@@ -31,4 +32,36 @@ struct diagnostics_info* diagnostic_create_source_loc_dyn(enum diagnostic_type t
   free(diagnostic->message); \
   if(diagnostic->source.filename) free(diagnostic->source.filename); \
   free(diagnostic); \
+}
+
+#define diagnostic_create_source_range_clean(results, type, message, file, min_version, max_version) \
+{ \
+  diagnostic_clean( \
+      diagnostic_create_source(type, message, file), \
+      analyzer_add_diagnostic_range_index(results, min_version, max_version, diagnostic) \
+  ); \
+}
+
+#define diagnostic_create_source_dyn_range_clean(results, type, message, file, min_version, max_version) \
+{ \
+  diagnostic_clean( \
+      diagnostic_create_source_dyn(type, message, file), \
+      analyzer_add_diagnostic_range_index(results, min_version, max_version, diagnostic) \
+  ); \
+}
+
+#define diagnostic_create_source_if_clean(results, type, message, file, expression) \
+{ \
+  diagnostic_clean( \
+      diagnostic_create_source(type, message, file), \
+      analyzer_add_diagnostic_range_if(results, expression, diagnostic) \
+  ); \
+}
+
+#define diagnostic_create_source_dyn_if_clean(results, type, message, file, expression) \
+{ \
+  diagnostic_clean( \
+      diagnostic_create_source_dyn(type, message, file), \
+      analyzer_add_diagnostic_range_if(results, expression, diagnostic) \
+  ); \
 }

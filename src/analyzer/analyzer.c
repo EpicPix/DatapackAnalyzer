@@ -18,16 +18,10 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
   }
 
   int pack_format = get_pack_format(zip);
-  diagnostic_clean(
-      diagnostic_create_source(diagnostic_warn, "Pack format does not match", "pack.mcmeta"),
-      analyzer_add_diagnostic_range_if(results, version->datapack_format != pack_format, diagnostic)
-  );
+  diagnostic_create_source_if_clean(results, diagnostic_warn, "Pack format does not match", "pack.mcmeta", version->datapack_format != pack_format);
 
   if(!file_exists(zip, "data/")) {
-    diagnostic_clean(
-        diagnostic_create_source(diagnostic_info, "'data' folder does not exist", "data/"),
-        analyzer_add_diagnostic_all(results, diagnostic);
-    );
+    diagnostic_clean(diagnostic_create_source(diagnostic_info, "'data' folder does not exist", "data/"), analyzer_add_diagnostic_all(results, diagnostic));
     return results;
   }
 
@@ -37,17 +31,11 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
     char* namespace = result[i];
 
     if(namespace_file_exists(zip, namespace, "tags/")) {
-      diagnostic_clean(
-          diagnostic_create(diagnostic_error, "Unable to use 'tags' data"),
-          analyzer_add_diagnostic_range_index(results, -1, version_index("17w49a"), diagnostic);
-      );
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'tags' data", NULL, -1, version_index("17w49a"));
     }
 
     if(namespace_file_exists(zip, namespace, "recipes/")) {
-      diagnostic_clean(
-          diagnostic_create(diagnostic_error, "Unable to use 'recipes' data"),
-          analyzer_add_diagnostic_range_index(results, -1, version_index("17w48a"), diagnostic);
-      );
+      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'recipes' data", NULL, -1, version_index("17w48a"));
     }
 
     if(namespace_file_exists(zip, namespace, "advancements/")) {
