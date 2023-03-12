@@ -31,34 +31,34 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
     char* namespace = result[i];
 
     if(namespace_file_exists(zip, namespace, "damage_type/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'damage_type' data", NULL, -1, version_index("23w06a"));
+      diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'damage_type' data"), namespace_file_string(namespace, "damage_type/"), -1, version_index("23w06a"));
     }
 
     if(namespace_file_exists(zip, namespace, "chat_type/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'chat_type' data", NULL, -1, version_index("22w42a"));
+      diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'chat_type' data"), namespace_file_string(namespace, "chat_type/"), -1, version_index("22w42a"));
     }
 
     if(namespace_file_exists(zip, namespace, "item_modifiers/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'item_modifiers' data", NULL, -1, version_index("20w46a"));
+      diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'item_modifiers' data"), namespace_file_string(namespace, "item_modifiers/"), -1, version_index("20w46a"));
     }
 
     if(namespace_file_exists(zip, namespace, "worldgen/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'worldgen' data", NULL, -1, version_index("20w28a"));
+      diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'worldgen' data"), namespace_file_string(namespace, "worldgen/"), -1, version_index("20w28a"));
     }
 
     if(namespace_file_exists(zip, namespace, "predicates/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'predicates' data", NULL, -1, version_index("19w38a"));
+      diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'predicates' data"), namespace_file_string(namespace, "predicates/"), -1, version_index("19w38a"));
     }
 
     if(namespace_file_exists(zip, namespace, "tags/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'tags' data", NULL, -1, version_index("17w49a"));
+      diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'tags' data"), namespace_file_string(namespace, "tags/"), -1, version_index("17w49a"));
 
       if(namespace_file_exists(zip, namespace, "tags/entity_types/")) {
-        diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'entity_types' tag data", NULL, version_index("17w49a"), version_index("18w43a"));
+        diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'entity_types' tag data"), namespace_file_string(namespace, "tags/entity_types/"), version_index("17w49a"), version_index("18w43a"));
       }
 
       if(namespace_file_exists(zip, namespace, "tags/functions/")) {
-        diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'functions' tag data", NULL, version_index("17w49a"), version_index("17w49b"));
+        diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'functions' tag data"), namespace_file_string(namespace, "tags/functions/"), version_index("17w49a"), version_index("17w49b"));
       }
 
       if(namespace_file_exists(zip, namespace, "tags/blocks/")) {
@@ -72,7 +72,7 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
     }
 
     if(namespace_file_exists(zip, namespace, "recipes/")) {
-      diagnostic_create_source_range_clean(results, diagnostic_error, "Unable to use 'recipes' data", NULL, -1, version_index("17w48a"));
+      diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'recipes' data"), namespace_file_string(namespace, "recipes/"), -1, version_index("17w48a"));
     }
 
     if(namespace_file_exists(zip, namespace, "advancements/")) {
