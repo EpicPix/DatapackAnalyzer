@@ -2,6 +2,7 @@
 #include <json-c/json.h>
 #include <stdlib.h>
 #include <zip.h>
+#include <string.h>
 
 char *load_file(zip_t *zip, const char *filename) {
   int64_t size = file_size(zip, filename);
@@ -54,4 +55,12 @@ int64_t file_size(zip_t *zip, const char* name) {
     return stat.size;
 
   return -1;
+}
+
+
+char* clone_string(const char* data) {
+  if(data == NULL) return NULL;
+  char* res = malloc(strlen(data) + 1);
+  strcpy(res, data);
+  return res;
 }

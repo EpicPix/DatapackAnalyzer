@@ -10,3 +10,5 @@ int get_pack_format(zip_t *zip);
 
 int64_t file_size(zip_t *zip, const char* name);
 #define file_exists(zip, name) (file_size(zip, name) != -1)
+
+char* clone_string(const char* data);
