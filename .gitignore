@@ -1,5 +1,5 @@
 *.zip
-analyzer
+/analyzer
 .vscode/
 .idea/
 .fleet/

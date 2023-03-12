@@ -17,9 +17,9 @@ int main(int argc, char **argv) {
 
   struct analyzer_results *results = analyze_datapack(zip);
   for(int i = 0; i<results->version_count; i++) {
-    results.
+    printf("Analyze version: %s\n", results->version_results[i].version);
+    free(results->version_results[i].diagnostics);
   }
-  printf("Results: %p\n", results);
   free(results->version_results);
   free(results);
 
