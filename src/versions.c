@@ -339,8 +339,6 @@ const struct version_info VERSIONS[] = {
   VERSION("17w46a", false, 3, 4),
   VERSION("17w45b", false, 3, 3),
   VERSION("17w45a", false, 3, 2),
-  VERSION("17w43b", false, 3, 1),
-  VERSION("17w43a", false, 3, 0),
 };
 
 const int VERSION_COUNT = sizeof(VERSIONS) / sizeof(struct version_info);
