@@ -20,11 +20,6 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
   int pack_format = get_pack_format(zip);
   diagnostic_create_source_if_clean(results, diagnostic_warn, "Pack format does not match", "pack.mcmeta", version->datapack_format != pack_format);
 
-  if(!file_exists(zip, "data/")) {
-    diagnostic_clean(diagnostic_create_source(diagnostic_info, "'data' folder does not exist", "data/"), analyzer_add_diagnostic_all(results, diagnostic));
-    return results;
-  }
-
   char **result;
   int count = list_namespaces(zip, &result);
   for(int i = 0; i<count; i++) {
