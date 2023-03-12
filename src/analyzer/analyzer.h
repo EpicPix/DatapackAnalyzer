@@ -50,6 +50,14 @@ struct diagnostics_info* diagnostic_create_source_loc(enum diagnostic_type type,
   } \
 }
 
+#define analyzer_add_diagnostic_all(RESULTS, DIAGNOSTIC) \
+{ \
+  struct diagnostics_info* diag = (DIAGNOSTIC); \
+  for(int RANGE = 0; RANGE<RESULTS->version_count; RANGE++) { \
+    analyzer_add_diagnostic_specific(&RESULTS->version_results[RANGE], diag); \
+  } \
+}
+
 void analyzer_add_diagnostic_range(struct analyzer_results *results, const char* min_version, const char* max_version, struct diagnostics_info* diagnostic);
 void analyzer_add_diagnostic_range_index(struct analyzer_results *results, int min_version, int max_version, struct diagnostics_info* diagnostic);
 void analyzer_add_diagnostic_specific(struct datapack_results* result, struct diagnostics_info* diagnostic);

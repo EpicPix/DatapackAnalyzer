@@ -17,6 +17,11 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
   int pack_format = get_pack_format(zip);
   analyzer_add_diagnostic_range_if(results, version->datapack_format != pack_format, diagnostic_create(diagnostic_warn, "Pack format does not match"));
 
+  if(!file_exists(zip, "data/")) {
+    analyzer_add_diagnostic_all(results, diagnostic_create(diagnostic_info, "'data' folder does not exist"));
+    return results;
+  }
+
   return results;
 };
 
