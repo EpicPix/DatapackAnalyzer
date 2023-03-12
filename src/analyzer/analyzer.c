@@ -2,6 +2,7 @@
 #include "diagnostics.h"
 #include "analyzer_diagnostics.h"
 #include "namespace.h"
+#include "data/data.h"
 #include "../loader.h"
 #include "../versions.h"
 #include <stdlib.h>
@@ -17,6 +18,8 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
     results->version_results[i].diagnostics = malloc(8 * sizeof(struct diagnostics_info));
   }
 
+  struct analysis_data* analysis = malloc(sizeof(struct analysis_data));
+
   int pack_format = get_pack_format(zip);
   diagnostic_create_source_if_clean(results, diagnostic_warn, "Pack format does not match", "pack.mcmeta", version->datapack_format != pack_format);
 
@@ -27,71 +30,60 @@ struct analyzer_results *analyze_datapack(zip_t *zip) {
 
     if(namespace_file_exists(zip, namespace, "damage_type/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'damage_type' data"), namespace_file_string(namespace, "damage_type/"), -1, version_index("23w06a"));
+      load_damage_type(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "chat_type/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'chat_type' data"), namespace_file_string(namespace, "chat_type/"), -1, version_index("22w42a"));
+      load_chat_type(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "item_modifiers/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'item_modifiers' data"), namespace_file_string(namespace, "item_modifiers/"), -1, version_index("20w46a"));
+      load_item_modifiers(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "worldgen/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'worldgen' data"), namespace_file_string(namespace, "worldgen/"), -1, version_index("20w28a"));
+      load_worldgen(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "predicates/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'predicates' data"), namespace_file_string(namespace, "predicates/"), -1, version_index("19w38a"));
+      load_predicates(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "tags/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'tags' data"), namespace_file_string(namespace, "tags/"), -1, version_index("17w49a"));
-
-      if(namespace_file_exists(zip, namespace, "tags/entity_types/")) {
-        diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'entity_types' tag data"), namespace_file_string(namespace, "tags/entity_types/"), version_index("17w49a"), version_index("18w43a"));
-      }
-
-      if(namespace_file_exists(zip, namespace, "tags/functions/")) {
-        diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'functions' tag data"), namespace_file_string(namespace, "tags/functions/"), version_index("17w49a"), version_index("17w49b"));
-      }
-
-      if(namespace_file_exists(zip, namespace, "tags/blocks/")) {
-
-      }
-
-      if(namespace_file_exists(zip, namespace, "tags/items/")) {
-
-      }
-
+      load_tags(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "recipes/")) {
       diagnostic_create_source_dyn_range_clean(results, diagnostic_error, clone_string("Unable to use 'recipes' data"), namespace_file_string(namespace, "recipes/"), -1, version_index("17w48a"));
+      load_recipes(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "advancements/")) {
-
+      load_advancements(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "functions/")) {
-
+      load_functions(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "loot_tables/")) {
-
+      load_loot_tables(zip, namespace, analysis, results);
     }
 
     if(namespace_file_exists(zip, namespace, "structures/")) {
-
+      load_structures(zip, namespace, analysis, results);
     }
-
-    //    printf("%s %ld %ld\n", result[i], strlen(result[i]), namespace_file_size(zip, result[i], "tags/"));
-    //    char* content = namespace_file_content(zip, result[i], "tags/functions/load.json");
 
     free(result[i]);
   }
   free(result);
+
+  free(analysis);
 
   return results;
 };
