@@ -1,3 +1,4 @@
+#include "analyzer/analyzer.h"
 #include "loader.h"
 #include "versions.h"
 #include <json-c/json.h>
@@ -14,16 +15,13 @@ int main(int argc, char **argv) {
   if (!zip)
     return 1;
 
-  for (int i = 0; i < VERSION_COUNT; i++) {
-    printf("%s\n", VERSIONS[i].version_name);
+  struct analyzer_results *results = analyze_datapack(zip);
+  for(int i = 0; i<results->version_count; i++) {
+    results.
   }
-
-  int pack_format = get_pack_format(zip);
-  if (pack_format == -1) {
-    printf("Invalid pack format: %d\n", pack_format);
-  } else {
-    printf("Pack format: %d\n", pack_format);
-  }
+  printf("Results: %p\n", results);
+  free(results->version_results);
+  free(results);
 
   zip_close(zip);
   return 0;
