@@ -78,8 +78,10 @@ int main(int argc, char **argv) {
   unload_listing();
   zip_close(zip);
 
-  write_flush(result_data);
-  free(result_data);
+  if(result_data) {
+    write_flush(result_data);
+    free(result_data);
+  }
   if(result_fd) {
     fclose(result_fd);
   }
