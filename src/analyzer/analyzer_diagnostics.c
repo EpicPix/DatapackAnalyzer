@@ -27,7 +27,6 @@ void analyzer_add_diagnostic_specific(struct datapack_results* result, struct di
   }
   memcpy(&result->diagnostics[result->diagnostics_count], diagnostic, sizeof(struct diagnostics_info));
   struct diagnostics_info* diag = &result->diagnostics[result->diagnostics_count];
-  diag->message = diag->message;
   diag->source.filename = clone_string(diag->source.filename);
   result->diagnostics_count++;
 };
