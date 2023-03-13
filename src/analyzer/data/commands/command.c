@@ -7,6 +7,19 @@ void load_command(zip_t* zip, const char* namespace_name, const char* filename, 
 //      diagnostic_create_source_loc_dyn(diagnostic_error, "Invalid command", namespace_file_string(namespace_name, filename + 1), line_number, -1),
 //      analyzer_add_diagnostic_all(results, diagnostic)
 //    );
+    int command_length = 0;
+    while(command_length < line_length) {
+      char c = line[command_length];
+      if(c == ' ' || c == '\t') {
+        break;
+      }
+      command_length++;
+    }
+//    if(command_length == 4) {
+//      if(memcmp(line, "team", 4) == 0) {
+//        printf("team command!\n");
+//      }
+//    }
 };
 
 void load_commands(zip_t* zip, const char* namespace_name, const char* filename, char* content, struct analysis_data *data, struct analyzer_results *results) {
