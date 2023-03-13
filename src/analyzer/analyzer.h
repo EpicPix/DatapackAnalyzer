@@ -15,5 +15,5 @@ struct analyzer_results {
   struct datapack_results *version_results;
 };
 
-struct analyzer_results *analyze_datapack(zip_t *zip);
+struct analyzer_results *analyze_datapack(zip_t *zip, const struct version_info* specific_version);
 

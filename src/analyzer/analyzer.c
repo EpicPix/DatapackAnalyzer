@@ -8,14 +8,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct analyzer_results *analyze_datapack(zip_t *zip) {
+struct analyzer_results *analyze_datapack(zip_t *zip, const struct version_info* specific_version) {
   struct analyzer_results *results = malloc(sizeof(struct analyzer_results));
-  results->version_count = VERSION_COUNT;
-  results->version_results = calloc(sizeof(struct datapack_results) * results->version_count, 1);
-  for(int i = 0; i<results->version_count; i++) {
-    results->version_results[i].version = &VERSIONS[i];
-    results->version_results[i].diagnostics_alloc = 8;
-    results->version_results[i].diagnostics = malloc(8 * sizeof(struct diagnostics_info));
+  if(!specific_version) {
+    results->version_count = VERSION_COUNT;
+    results->version_results = calloc(sizeof(struct datapack_results) * results->version_count, 1);
+    for(int i = 0; i<results->version_count; i++){
+      results->version_results[i].version = &VERSIONS[i];
+      results->version_results[i].diagnostics_alloc = 8;
+      results->version_results[i].diagnostics = malloc(8 * sizeof(struct diagnostics_info));
+    }
+  }else {
+    results->version_count = 1;
+    results->version_results = calloc(sizeof(struct datapack_results) * results->version_count, 1);
+    results->version_results[0].version = specific_version;
+    results->version_results[0].diagnostics_alloc = 8;
+    results->version_results[0].diagnostics = malloc(8 * sizeof(struct diagnostics_info));
   }
 
   struct analysis_data* analysis = malloc(sizeof(struct analysis_data));

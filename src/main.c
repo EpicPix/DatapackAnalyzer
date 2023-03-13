@@ -24,7 +24,7 @@ void write_result(struct datapack_results* results, struct file_result_data *fil
 
 int main(int argc, char **argv) {
   if (argc < 2) {
-    printf("Usage: %s <datapack> [result_file]\n", argv[0]);
+    printf("Usage: %s <datapack> [result_file] [version]\n", argv[0]);
     return 1;
   }
 
@@ -35,6 +35,13 @@ int main(int argc, char **argv) {
     result_data = calloc(sizeof(struct file_result_data), 1);
     result_data->file = result_fd;
   }
+  const char* specific_version_name = argc > 3 ? argv[3] : NULL;
+  int specific_version_id = specific_version_name != NULL ? version_index(specific_version_name) : -2;
+  if(specific_version_id == -1) {
+    printf("Unknown version: %s\n", specific_version_name);
+    return 1;
+  }
+  const struct version_info* specific_version = specific_version_id != -2 ? &VERSIONS[specific_version_id] : NULL;
 
   zip_t *zip = zip_open(argv[1], ZIP_RDONLY, NULL);
   if (!zip)
@@ -42,7 +49,7 @@ int main(int argc, char **argv) {
 
   load_listing(zip);
 
-  struct analyzer_results *results = analyze_datapack(zip);
+  struct analyzer_results *results = analyze_datapack(zip, specific_version);
   if(result_data)
     write16(result_data, results->version_count);
 
