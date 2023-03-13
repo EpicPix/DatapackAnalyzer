@@ -40,6 +40,8 @@ int main(int argc, char **argv) {
   if (!zip)
     return 1;
 
+  load_listing(zip);
+
   struct analyzer_results *results = analyze_datapack(zip);
   if(result_data)
     write16(result_data, results->version_count);
@@ -73,6 +75,7 @@ int main(int argc, char **argv) {
   free(results->version_results);
   free(results);
 
+  unload_listing();
   zip_close(zip);
 
   write_flush(result_data);

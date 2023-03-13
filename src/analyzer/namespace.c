@@ -9,15 +9,15 @@ int list_namespaces(zip_t *zip, char ***result) {
   int alloc_count = 8;
   *result = malloc(alloc_count * sizeof(char**));
 
-  int entry_count = zip_get_num_entries(zip, 0);
+  int entry_count = listing_index->count;
   for(int i = 0; i<entry_count; i++) {
-    zip_stat_t stat;
-    zip_stat_index(zip, i, 0, &stat);
-    int name_length = strlen(stat.name);
-    if(name_length > 5 && stat.name[name_length - 1] == '/' && strncmp(stat.name, "data/", 5) == 0) {
+    struct zip_listing_index* entry = &listing_index->indexes[i];
+    const char* ename = entry->filename;
+    int name_length = entry->filename_size;
+    if(name_length > 5 && ename[name_length - 1] == '/' && memcmp(ename, "data/", 5) == 0) {
       bool valid = true;
       for(int j = 5; j<name_length - 1; j++) {
-        if(stat.name[j] == '/') {
+        if(ename[j] == '/') {
           valid = false;
           break;
         }
@@ -28,7 +28,7 @@ int list_namespaces(zip_t *zip, char ***result) {
           *result = realloc(*result, alloc_count * sizeof(char**));
         }
         char* namespace_name = malloc(name_length - 5);
-        memcpy(namespace_name, stat.name + 5, name_length - 6);
+        memcpy(namespace_name, ename + 5, name_length - 6);
         namespace_name[name_length - 6] = '\0';
         (*result)[result_count++] = namespace_name;
       }
@@ -46,22 +46,22 @@ int list_namespace_files(zip_t *zip, const char* namespace, char* loc, char ***r
   int loc_length = strlen(loc);
   int min_len = 5 + namespace_length + loc_length;
 
-  int entry_count = zip_get_num_entries(zip, 0);
+  int entry_count = listing_index->count;
   for(int i = 0; i<entry_count; i++) {
-    zip_stat_t stat;
-    zip_stat_index(zip, i, 0, &stat);
-    int name_length = strlen(stat.name);
+    struct zip_listing_index* entry = &listing_index->indexes[i];
+    const char* ename = entry->filename;
+    int name_length = entry->filename_size;
     if(name_length > min_len &&
-        stat.name[name_length - 1] != '/' &&
-        strncmp(stat.name, "data/", 5) == 0 &&
-        strncmp(stat.name + 5, namespace, namespace_length) == 0 &&
-        strncmp(stat.name + 5 + namespace_length, loc, loc_length) == 0) {
+        ename[name_length - 1] != '/' &&
+        memcmp(ename, "data/", 5) == 0 &&
+        memcmp(ename + 5, namespace, namespace_length) == 0 &&
+        memcmp(ename + 5 + namespace_length, loc, loc_length) == 0) {
       if(result_count >= alloc_count) {
         alloc_count *= 2;
         *result = realloc(*result, alloc_count * sizeof(char**));
       }
       char* name = malloc(name_length - 5 - namespace_length + 1);
-      memcpy(name, stat.name + 5 + namespace_length, name_length - 5 - namespace_length);
+      memcpy(name, ename + 5 + namespace_length, name_length - 5 - namespace_length);
       name[name_length - 5 - namespace_length] = '\0';
       (*result)[result_count++] = name;
     }

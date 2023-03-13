@@ -9,12 +9,11 @@ void load_command(zip_t* zip, const char* namespace_name, const char* filename, 
 //    );
 };
 
-void load_commands(zip_t* zip, const char* namespace_name, const char* filename, const char* content, struct analysis_data *data, struct analyzer_results *results) {
+void load_commands(zip_t* zip, const char* namespace_name, const char* filename, char* content, struct analysis_data *data, struct analyzer_results *results) {
   int max_len = strlen(content);
   int line_number = 1;
   for(int i = 0; i<max_len; i++) {
-    if(content[i] == '#') {
-      // comment, ignore
+    while(content[i] == '#') {
       while(i<max_len) {
         if(content[i] == '\n') {
           line_number++;
@@ -34,11 +33,10 @@ void load_commands(zip_t* zip, const char* namespace_name, const char* filename,
     }
     int end = i;
     if(end != start) {
-      char* line = malloc(end - start + 1);
-      memcpy(line, content + start, end - start);
-      line[end - start] = '\0';
-      load_command(zip, namespace_name, filename, line_number, line, end - start, data, results);
-      free(line);
+      char endChar = content[end];
+      content[end] = '\0';
+      load_command(zip, namespace_name, filename, line_number, content + start, end - start, data, results);
+      content[end] = endChar;
     }
   }
 };

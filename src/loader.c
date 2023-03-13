@@ -4,17 +4,50 @@
 #include <zip.h>
 #include <string.h>
 
+struct zip_listing_index_list* listing_index = NULL;
+
+void load_listing(zip_t* zip) {
+  unload_listing();
+
+
+  int result_count = 0;
+  int alloc_count = 8;
+  listing_index = malloc(sizeof(struct zip_listing_index_list) + alloc_count * sizeof(struct zip_listing_index));
+
+  int entry_count = zip_get_num_entries(zip, 0);
+  for(int i = 0; i<entry_count; i++) {
+    zip_stat_t stat;
+    zip_stat_index(zip, i, 0, &stat);
+    if(result_count >= alloc_count) {
+      alloc_count *= 2;
+      listing_index = realloc(listing_index, sizeof(struct zip_listing_index_list) + alloc_count * sizeof(struct zip_listing_index));
+    }
+    struct zip_listing_index* entry = &listing_index->indexes[result_count++];
+    entry->size = stat.size;
+    entry->filename = stat.name;
+    int filename_length = strlen(stat.name);
+    entry->filename_size = filename_length;
+  }
+  listing_index->count = result_count;
+}
+
+void unload_listing() {
+  if(listing_index) {
+    free(listing_index);
+  }
+}
+
 char *load_file(zip_t *zip, const char *filename) {
   int64_t size = file_size(zip, filename);
-  if(size == -1)
-    return NULL;
-
-  zip_file_t *file = zip_fopen(zip, filename, 0);
-  char *content = malloc(size + 1);
-  zip_fread(file, content, size);
-  content[size] = '\0';
-  zip_fclose(file);
-  return content;
+  if(size != -1) {
+    zip_file_t *file = zip_fopen(zip, filename, 0);
+    char *content = malloc(size + 1);
+    zip_fread(file, content, size);
+    content[size] = '\0';
+    zip_fclose(file);
+    return content;
+  }
+  return NULL;
 }
 
 json_object *get_file_json(zip_t *zip, const char *filename) {
@@ -44,14 +77,9 @@ int get_pack_format(zip_t *zip) {
   return format;
 }
 
-#define ZIP_STAT_REQUIRED (ZIP_STAT_NAME | ZIP_STAT_SIZE)
-
-int64_t file_size(zip_t *zip, const char* name) {
+int file_size(zip_t *zip, const char* name) {
   zip_stat_t stat;
-  if(zip_stat(zip, name, 0, &stat) != 0)
-    return -1;
-
-  if((stat.valid & ZIP_STAT_REQUIRED) == ZIP_STAT_REQUIRED)
+  if(zip_stat(zip, name, 0, &stat) == 0)
     return stat.size;
 
   return -1;
