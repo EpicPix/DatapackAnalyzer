@@ -49,6 +49,14 @@ struct diagnostics_info* diagnostic_create_source_loc_dyn(enum diagnostic_type t
   ); \
 }
 
+#define diagnostic_create_source_loc_dyn_range_clean(results, type, message, file, line, column, min_version, max_version) \
+{ \
+  diagnostic_clean( \
+      diagnostic_create_source_loc_dyn(type, message, file, line, column), \
+      analyzer_add_diagnostic_range_index(results, min_version, max_version, diagnostic) \
+  ); \
+}
+
 #define diagnostic_create_source_if_clean(results, type, message, file, expression) \
 { \
   diagnostic_clean( \
