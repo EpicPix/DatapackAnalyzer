@@ -4,7 +4,7 @@
 
 void load_command(zip_t* zip, const char* namespace_name, const char* filename, int line_number, const char* line, int line_length, struct analysis_data *data, struct analyzer_results *results) {
     diagnostic_clean(
-      diagnostic_create_source_loc_dyn(diagnostic_error, clone_string("Invalid command"), namespace_file_string(namespace_name, filename + 1), line_number, -1),
+      diagnostic_create_source_loc_dyn(diagnostic_error, "Invalid command", namespace_file_string(namespace_name, filename + 1), line_number, -1),
       analyzer_add_diagnostic_all(results, diagnostic)
     );
 };

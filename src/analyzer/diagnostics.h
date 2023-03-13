@@ -15,7 +15,7 @@ struct diagnostics_source_info {
 
 struct diagnostics_info {
   enum diagnostic_type type;
-  char* message;
+  const char* message;
   struct diagnostics_source_info source;
 };
 
@@ -29,7 +29,6 @@ struct diagnostics_info* diagnostic_create_source_loc_dyn(enum diagnostic_type t
 { \
   struct diagnostics_info* diagnostic = (DIAGNOSTIC); \
   OPERATION; \
-  free(diagnostic->message); \
   if(diagnostic->source.filename) free(diagnostic->source.filename); \
   free(diagnostic); \
 }

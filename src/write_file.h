@@ -2,31 +2,52 @@
 
 #include <endian.h>
 #include <string.h>
+#include <stdio.h>
 
-#define write8(FILE, VALUE) { \
-  uint8_t value_input = VALUE; \
-  fwrite(&value_input, 1, 1, FILE); \
+struct file_result_data {
+  FILE *file;
+  long index;
+  char data[8192];
+};
+
+#define write_flush(RESULT) { \
+  fwrite(&RESULT->data, 1, RESULT->index, RESULT->file); \
+  RESULT->index = 0; \
 }
 
-#define write16(FILE, VALUE) { \
-uint16_t value_input = htole16(VALUE); \
-fwrite(&value_input, 1, 2, FILE); \
+#define write_ensure_space(RESULT, MIN) { \
+  if(RESULT->index + (MIN) >= 8192) { \
+    write_flush(RESULT) \
+  } \
 }
 
-#define write32(FILE, VALUE) { \
-uint32_t value_input = htole32(VALUE); \
-fwrite(&value_input, 1, 4, FILE); \
+#define write8(RESULT, VALUE) { \
+  write_ensure_space(RESULT, 1); \
+  RESULT->data[RESULT->index++] = VALUE; \
 }
 
-#define write64(FILE, VALUE) { \
-uint64_t value_input = htole64(VALUE); \
-fwrite(&value_input, 1, 8, FILE); \
+#define write16(RESULT, VALUE) { \
+  write_ensure_space(RESULT, 2); \
+  RESULT->data[RESULT->index++] = VALUE; \
+  RESULT->data[RESULT->index++] = VALUE >> 8; \
 }
 
-#define writestr(FILE, VALUE) { \
+#define write32(RESULT, VALUE) { \
+  write_ensure_space(RESULT, 4); \
+  RESULT->data[RESULT->index++] = VALUE; \
+  RESULT->data[RESULT->index++] = VALUE >> 8; \
+  RESULT->data[RESULT->index++] = VALUE >> 16; \
+  RESULT->data[RESULT->index++] = VALUE >> 24; \
+}
+
+#define writestr(RESULT, VALUE) { \
   const char* val = VALUE; \
   if(val != NULL) { \
-    write16(FILE, strlen(val)); \
-    fwrite(val, 1, strlen(val), FILE); \
-  } else write16(FILE, 0); \
+    int len = strlen(val); \
+    write_ensure_space(RESULT, 2 + len); \
+    RESULT->data[RESULT->index++] = len; \
+    RESULT->data[RESULT->index++] = len >> 8; \
+    memcpy(&RESULT->data[RESULT->index], val, len); \
+    RESULT->index += len; \
+  } else write16(RESULT, 0); \
 }

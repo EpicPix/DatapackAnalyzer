@@ -8,14 +8,13 @@
 #include <zip.h>
 #include "write_file.h"
 
-void write_result(struct datapack_results* results, FILE* file) {
+void write_result(struct datapack_results* results, struct file_result_data *file) {
     writestr(file, results->version->version_name);
     write32(file, results->diagnostics_count);
     for(int j = 0; j<results->diagnostics_count; j++) {
       struct diagnostics_info* diagnostic = &results->diagnostics[j];
       write8(file, diagnostic->type);
       writestr(file, diagnostic->message);
-      free(diagnostic->message);
       writestr(file, diagnostic->source.filename);
       if(diagnostic->source.filename) free(diagnostic->source.filename);
       write32(file, diagnostic->source.line);
@@ -31,19 +30,24 @@ int main(int argc, char **argv) {
 
   const char* result_file = argc > 2 ? argv[2] : NULL;
   FILE* result_fd = result_file != NULL ? fopen(result_file, "w") : NULL;
+  struct file_result_data* result_data;
+  if(result_fd) {
+    result_data = calloc(sizeof(struct file_result_data), 1);
+    result_data->file = result_fd;
+  }
 
   zip_t *zip = zip_open(argv[1], ZIP_RDONLY, NULL);
   if (!zip)
     return 1;
 
   struct analyzer_results *results = analyze_datapack(zip);
-  if(result_fd)
-    write16(result_fd, results->version_count);
+  if(result_data)
+    write16(result_data, results->version_count);
 
   for(int i = 0; i<results->version_count; i++) {
     struct datapack_results* datapack_result = &results->version_results[i];
-    if(result_fd) {
-      write_result(datapack_result, result_fd);
+    if(result_data) {
+      write_result(datapack_result, result_data);
     }else {
       printf("Analyze version: %s (%d)\n", datapack_result->version->version_name, datapack_result->diagnostics_count);
       for(int j = 0; j<datapack_result->diagnostics_count; j++) {
@@ -62,7 +66,6 @@ int main(int argc, char **argv) {
         }else {
           printf("- %d: %s\n", diagnostic->type, diagnostic->message);
         }
-        free(diagnostic->message);
       }
     }
     free(datapack_result->diagnostics);
@@ -72,6 +75,8 @@ int main(int argc, char **argv) {
 
   zip_close(zip);
 
+  write_flush(result_data);
+  free(result_data);
   if(result_fd) {
     fclose(result_fd);
   }
