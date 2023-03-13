@@ -10,7 +10,7 @@ struct diagnostics_info* diagnostic_create_source(enum diagnostic_type type, con
   return diagnostic_create_source_loc(type, message, file, -1, -1);
 }
 
-struct diagnostics_info* diagnostic_create_source_dyn(enum diagnostic_type type, char* message, char* file) {
+struct diagnostics_info* diagnostic_create_source_dyn(enum diagnostic_type type, const char* message, char* file) {
   return diagnostic_create_source_loc_dyn(type, message, file, -1, -1);
 }
 
@@ -24,7 +24,7 @@ struct diagnostics_info* diagnostic_create_source_loc(enum diagnostic_type type,
   return info;
 }
 
-struct diagnostics_info* diagnostic_create_source_loc_dyn(enum diagnostic_type type, char* message, char* file, int line, int column) {
+struct diagnostics_info* diagnostic_create_source_loc_dyn(enum diagnostic_type type, const char* message, char* file, int line, int column) {
   struct diagnostics_info* info = malloc(sizeof(struct diagnostics_info));
   info->type = type;
   info->message = message;

@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
   const char* result_file = argc > 2 ? argv[2] : NULL;
   FILE* result_fd = result_file != NULL ? fopen(result_file, "w") : NULL;
-  struct file_result_data* result_data;
+  struct file_result_data* result_data = NULL;
   if(result_fd) {
     result_data = calloc(sizeof(struct file_result_data), 1);
     result_data->file = result_fd;

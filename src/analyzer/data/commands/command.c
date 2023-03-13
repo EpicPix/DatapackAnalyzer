@@ -17,37 +17,37 @@ void load_command(zip_t* zip, const char* namespace_name, const char* filename, 
     }
     if(command_length == 4) {
       if(memcmp(line, "data", 4) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `data` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("17w45b"));
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `data` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "17w45b");
       }else if(memcmp(line, "ride", 4) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `ride` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("23w03a"));
+        analyzer_add_diagnostic_range_msg_file_loDc(results, diagnostic_error, "Command `ride` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "23w03a");
       }
     }else if(command_length == 6) {
       if(memcmp(line, "damage", 6) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `damage` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("23w06a"));
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `damage` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "23w06a");
       }
     }else if(command_length == 9) {
       if(memcmp(line, "attribute", 9) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `attribute` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("20w17a"));
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `attribute` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "20w17a");
       }else if(memcmp(line, "fillbiome", 9) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `fillbiome` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("22w46a"));
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `fillbiome` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "22w46a");
       }else if(memcmp(line, "blockdata", 10) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `blockdata` is not supported in this version, use `data block`", namespace_file_string(namespace_name, filename + 1), line_number, column, version_index("17w45b"), -1);
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `blockdata` is not supported in this version, use `data block`", namespace_file_string(namespace_name, filename + 1), line_number, column, "17w45b", NULL);
       }
     }else if(command_length == 10) {
       if(memcmp(line, "entitydata", 10) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `entitydata` is not supported in this version, use `data entity`", namespace_file_string(namespace_name, filename + 1), line_number, column, version_index("17w45b"), -1);
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `entitydata` is not supported in this version, use `data entity`", namespace_file_string(namespace_name, filename + 1), line_number, column, "17w45b", NULL);
       }
     }else if(command_length == 11) {
       if(memcmp(line, "locatebiome", 11) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `locatebiome` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("20w06a"));
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `locatebiome` is not supported in this version, use `locate biome`", namespace_file_string(namespace_name, filename + 1), line_number, column, version_index("22w19a"), -1);
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `locatebiome` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "20w06a");
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `locatebiome` is not supported in this version, use `locate biome`", namespace_file_string(namespace_name, filename + 1), line_number, column, "22w19a", NULL);
       }else if(memcmp(line, "replaceitem", 11) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `replaceitem` is not supported in this version, use `item replace`", namespace_file_string(namespace_name, filename + 1), line_number, column, version_index("20w46a"), -1);
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `replaceitem` is not supported in this version, use `item replace`", namespace_file_string(namespace_name, filename + 1), line_number, column, "20w46a", NULL);
       }
     }else if(command_length == 12) {
       if(memcmp(line, "placefeature", 12) == 0) {
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `placefeature` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("22w03a"));
-        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `placefeature` is not supported in this version, use `place feature`", namespace_file_string(namespace_name, filename + 1), line_number, column, version_index("22w18a"), -1);
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `placefeature` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "22w03a");
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `placefeature` is not supported in this version, use `place feature`", namespace_file_string(namespace_name, filename + 1), line_number, column, "22w18a", NULL);
       }
     }
 };

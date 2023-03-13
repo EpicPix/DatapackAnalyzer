@@ -2,6 +2,7 @@
 #include <string.h>
 
 int version_index(const char* name) {
+  if(name == NULL) return -1;
   for(int i = 0; i<VERSION_COUNT; i++) {
     if(strcmp(VERSIONS[i].version_name, name) == 0) {
       return VERSIONS[i].index;
