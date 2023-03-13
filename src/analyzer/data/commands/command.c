@@ -16,7 +16,9 @@ void load_command(zip_t* zip, const char* namespace_name, const char* filename, 
       command_length++;
     }
     if(command_length == 4) {
-      if(memcmp(line, "ride", 4) == 0) {
+      if(memcmp(line, "data", 4) == 0) {
+        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `data` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("17w45b"));
+      }else if(memcmp(line, "ride", 4) == 0) {
         diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `ride` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("23w03a"));
       }
     }else if(command_length == 6) {
@@ -28,6 +30,12 @@ void load_command(zip_t* zip, const char* namespace_name, const char* filename, 
         diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `attribute` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("20w17a"));
       }else if(memcmp(line, "fillbiome", 9) == 0) {
         diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `fillbiome` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, -1, version_index("22w46a"));
+      }else if(memcmp(line, "blockdata", 10) == 0) {
+        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `blockdata` is not supported in this version, use `data block`", namespace_file_string(namespace_name, filename + 1), line_number, column, version_index("17w45b"), -1);
+      }
+    }else if(command_length == 10) {
+      if(memcmp(line, "entitydata", 10) == 0) {
+        diagnostic_create_source_loc_dyn_range_clean(results, diagnostic_error, "Command `entitydata` is not supported in this version, use `data entity`", namespace_file_string(namespace_name, filename + 1), line_number, column, version_index("17w45b"), -1);
       }
     }else if(command_length == 11) {
       if(memcmp(line, "locatebiome", 11) == 0) {
