@@ -19,7 +19,7 @@ void load_command(zip_t* zip, const char* namespace_name, const char* filename, 
       if(memcmp(line, "data", 4) == 0) {
         analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `data` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "17w45b");
       }else if(memcmp(line, "ride", 4) == 0) {
-        analyzer_add_diagnostic_range_msg_file_loDc(results, diagnostic_error, "Command `ride` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "23w03a");
+        analyzer_add_diagnostic_range_msg_file_loc(results, diagnostic_error, "Command `ride` is not supported in this version", namespace_file_string(namespace_name, filename + 1), line_number, column, NULL, "23w03a");
       }
     }else if(command_length == 6) {
       if(memcmp(line, "damage", 6) == 0) {
