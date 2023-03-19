@@ -14,6 +14,7 @@ int version_index(const char* name) {
 #define VERSION(NAME, RELEASE, DATAPACK_FORMAT, INDEX) { .version_name = NAME, .datapack_format = DATAPACK_FORMAT, .index = INDEX, .release = RELEASE }
 
 const struct version_info VERSIONS[] = {
+  VERSION("1.19.4", true, 12, 32),
   VERSION("1.19.4-rc3", false, 12, 328),
   VERSION("1.19.4-rc2", false, 12, 327),
   VERSION("1.19.4-rc1", false, 12, 326),
