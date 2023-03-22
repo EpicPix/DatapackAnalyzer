@@ -30,6 +30,7 @@ const struct version_info* version_info(const char *name) {
   }
 
 const struct version_info VERSIONS[] = {
+    VERSION("23w12a", false, 13, 330),
     VERSION("1.19.4", true, 12, 329),
     VERSION("1.19.4-rc3", false, 12, 328),
     VERSION("1.19.4-rc2", false, 12, 327),
