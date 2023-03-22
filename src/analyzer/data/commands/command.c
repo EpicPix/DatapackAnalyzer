@@ -175,7 +175,7 @@ COMMAND(recipe) {
 }
 
 COMMAND(reload) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `reload` is not supported in this version", NULL, "1.14.4-pre4");
 }
 
 COMMAND(replaceitem) {
