@@ -36,7 +36,7 @@ COMMAND(blockdata) {
 }
 
 COMMAND(bossbar) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `bossbar` is not supported in this version", NULL, "18w05a");
 }
 
 COMMAND(clear) {
@@ -65,6 +65,11 @@ COMMAND(defaultgamemode) {
 
 COMMAND(difficulty) {
 
+}
+
+COMMAND(drop) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `drop` is not supported in this version", NULL, "18w43a");
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `drop` is not supported in this version, use `loot`", "18w45a", NULL);
 }
 
 COMMAND(effect) {
@@ -96,7 +101,7 @@ COMMAND(fillbiome) {
 }
 
 COMMAND(forceload) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `forceload` is not supported in this version", NULL, "1.14.4-pre4");
 }
 
 COMMAND(function) {
@@ -120,7 +125,7 @@ COMMAND(help) {
 }
 
 COMMAND(item) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `item` is not supported in this version", NULL, "20w46a");
 }
 
 COMMAND(kill) {
@@ -141,7 +146,7 @@ COMMAND(locatebiome) {
 }
 
 COMMAND(loot) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `loot` is not supported in this version", NULL, "18w45a");
 }
 
 COMMAND(me) {
@@ -153,7 +158,7 @@ COMMAND(particle) {
 }
 
 COMMAND(place) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `place` is not supported in this version", NULL, "22w18a");
 }
 
 COMMAND(placefeature) {
@@ -186,7 +191,7 @@ COMMAND(say) {
 }
 
 COMMAND(schedule) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `scnedule` is not supported in this version", NULL, "18w43a");
 }
 
 COMMAND(scoreboard) {
@@ -210,7 +215,7 @@ COMMAND(spawnpoint) {
 }
 
 COMMAND(spectate) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `spectate` is not supported in this version", NULL, "19w41a");
 }
 
 COMMAND(spreadplayers) {
@@ -234,7 +239,7 @@ COMMAND(team) {
 }
 
 COMMAND(teammsg) {
-
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `teammsg` is not supported in this version", NULL, "19w02a");
 }
 
 COMMAND(teleport) {
@@ -262,10 +267,6 @@ COMMAND(trigger) {
 }
 
 COMMAND(weather) {
-
-}
-
-COMMAND(whitelist) {
 
 }
 
@@ -297,6 +298,7 @@ void load_command(zip_t* zip, struct command_load_context* context) {
   CHECK_COMMAND(datapack);
   CHECK_COMMAND(defaultgamemode);
   CHECK_COMMAND(difficulty);
+  CHECK_COMMAND(drop);
   CHECK_COMMAND(effect);
   CHECK_COMMAND(enchant);
   CHECK_COMMAND(entitydata);
@@ -346,7 +348,6 @@ void load_command(zip_t* zip, struct command_load_context* context) {
   CHECK_COMMAND(title);
   CHECK_COMMAND(trigger);
   CHECK_COMMAND(weather);
-  CHECK_COMMAND(whitelist);
   CHECK_COMMAND(worldborder);
   CHECK_COMMAND_ALIAS(tm, teammsg);
   CHECK_COMMAND_ALIAS(tp, teleport);
