@@ -12,6 +12,17 @@ int version_index(const char *name) {
   return -1;
 }
 
+const struct version_info* version_info(const char *name) {
+  if (name == NULL)
+    return NULL;
+  for (int i = 0; i < VERSION_COUNT; i++) {
+    if (strcmp(VERSIONS[i].version_name, name) == 0) {
+      return &VERSIONS[i];
+    }
+  }
+  return NULL;
+}
+
 #define VERSION(NAME, RELEASE, DATAPACK_FORMAT, INDEX)                         \
   {                                                                            \
     .version_name = NAME, .datapack_format = DATAPACK_FORMAT, .index = INDEX,  \

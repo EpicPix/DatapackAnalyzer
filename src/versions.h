@@ -13,3 +13,4 @@ extern const struct version_info VERSIONS[];
 extern const int VERSION_COUNT;
 
 int version_index(const char* name);
+const struct version_info* version_info(const char *name);

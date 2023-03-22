@@ -5,6 +5,7 @@
 #include <json-c/json.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <zip.h>
 #include "write_file.h"
 
@@ -29,19 +30,18 @@ int main(int argc, char **argv) {
   }
 
   const char* result_file = argc > 2 ? argv[2] : NULL;
-  FILE* result_fd = result_file != NULL ? fopen(result_file, "w") : NULL;
+  FILE* result_fd = (result_file != NULL && strcmp(result_file, "-") != 0) ? fopen(result_file, "w") : NULL;
   struct file_result_data* result_data = NULL;
   if(result_fd) {
     result_data = calloc(sizeof(struct file_result_data), 1);
     result_data->file = result_fd;
   }
   const char* specific_version_name = argc > 3 ? argv[3] : NULL;
-  int specific_version_id = specific_version_name != NULL ? version_index(specific_version_name) : -2;
-  if(specific_version_id == -1) {
+  const struct version_info* specific_version = version_info(specific_version_name);
+  if(specific_version_name != NULL && specific_version == NULL) {
     printf("Unknown version: %s\n", specific_version_name);
     return 1;
   }
-  const struct version_info* specific_version = specific_version_id != -2 ? &VERSIONS[specific_version_id] : NULL;
 
   zip_t *zip = zip_open(argv[1], ZIP_RDONLY, NULL);
   if (!zip)
