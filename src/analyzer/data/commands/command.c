@@ -56,19 +56,21 @@ void load_commands(zip_t* zip, const char* namespace_name, const char* filename,
   int max_len = strlen(content);
   int line_number = 1;
   for(int i = 0; i<max_len; i++) {
-    while(content[i] == '#') {
+  do_loop:
+    if(content[i] == '#') {
       while(i<max_len) {
         if(content[i++] == '\n') {
           line_number++;
           break;
         }
       }
+      goto do_loop;
     }
     int start = i;
     while(i<max_len) {
       if(content[i++] == '\n') {
         line_number++;
-        break;
+        goto do_loop;
       }
     }
     int end = i;
