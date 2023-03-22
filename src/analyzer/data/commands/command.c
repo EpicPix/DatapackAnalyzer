@@ -5,6 +5,9 @@
 #define COMMAND_DIAGNOSTIC_RANGE(CONTEXT, TYPE, VALUE, MIN_VERSION, MAX_VERSION) \
   analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, namespace_file_string(CONTEXT->namespace_name, context->filename + 1), context->line_number, context->column, MIN_VERSION, MAX_VERSION)
 
+#define COMMAND(NAME) void load_command_##NAME(zip_t* zip, struct command_load_context* context)
+#define CHECK_COMMAND(NAME) if(command_length == strlen(#NAME) && memcmp(line, #NAME, command_length) == 0) { load_command_##NAME(zip, context); return; }
+
 struct command_load_context {
   const char* namespace_name;
   const char* filename;
@@ -15,6 +18,48 @@ struct command_load_context {
   struct analysis_data *data;
   struct analyzer_results *results;
 };
+
+COMMAND(attribute) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `attribute` is not supported in this version", NULL, "20w17a");
+}
+
+COMMAND(blockdata) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `blockdata` is not supported in this version, use `data block`", "17w45b", NULL);
+}
+
+COMMAND(damage) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `damage` is not supported in this version", NULL, "23w06a");
+}
+
+COMMAND(data) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `data` is not supported in this version", NULL, "17w45b");
+}
+
+COMMAND(entitydata) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `entitydata` is not supported in this version, use `data entity`", "17w45b", NULL);
+}
+
+COMMAND(fillbiome) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `fillbiome` is not supported in this version", NULL, "22w46a");
+}
+
+COMMAND(locatebiome) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `locatebiome` is not supported in this version", NULL, "20w06a");
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `locatebiome` is not supported in this version, use `locate biome`", "22w19a", NULL);
+}
+
+COMMAND(placefeature) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `placefeature` is not supported in this version", NULL, "22w03a");
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `placefeature` is not supported in this version, use `place feature`", "22w18a", NULL);
+}
+
+COMMAND(replaceitem) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `replaceitem` is not supported in this version, use `item replace`", "20w46a", NULL);
+}
+
+COMMAND(ride) {
+  COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `ride` is not supported in this version", NULL, "23w03a");
+}
 
 void load_command(zip_t* zip, struct command_load_context* context) {
   struct analyzer_results *results = context->results;
@@ -28,41 +73,17 @@ void load_command(zip_t* zip, struct command_load_context* context) {
     }
     command_length++;
   }
-  if(command_length == 4) {
-    if(memcmp(line, "data", 4) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `data` is not supported in this version", NULL, "17w45b");
-    }else if(memcmp(line, "ride", 4) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `ride` is not supported in this version", NULL, "23w03a");
-    }
-  }else if(command_length == 6) {
-    if(memcmp(line, "damage", 6) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `damage` is not supported in this version", NULL, "23w06a");
-    }
-  }else if(command_length == 9) {
-    if(memcmp(line, "attribute", 9) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `attribute` is not supported in this version", NULL, "20w17a");
-    }else if(memcmp(line, "fillbiome", 9) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `fillbiome` is not supported in this version", NULL, "22w46a");
-    }else if(memcmp(line, "blockdata", 10) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `blockdata` is not supported in this version, use `data block`", "17w45b", NULL);
-    }
-  }else if(command_length == 10) {
-    if(memcmp(line, "entitydata", 10) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `entitydata` is not supported in this version, use `data entity`", "17w45b", NULL);
-    }
-  }else if(command_length == 11) {
-    if(memcmp(line, "locatebiome", 11) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `locatebiome` is not supported in this version", NULL, "20w06a");
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `locatebiome` is not supported in this version, use `locate biome`", "22w19a", NULL);
-    }else if(memcmp(line, "replaceitem", 11) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `replaceitem` is not supported in this version, use `item replace`", "20w46a", NULL);
-    }
-  }else if(command_length == 12) {
-    if(memcmp(line, "placefeature", 12) == 0) {
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `placefeature` is not supported in this version", NULL, "22w03a");
-      COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Command `placefeature` is not supported in this version, use `place feature`", "22w18a", NULL);
-    }
-  }
+
+  CHECK_COMMAND(attribute);
+  CHECK_COMMAND(blockdata);
+  CHECK_COMMAND(damage);
+  CHECK_COMMAND(data);
+  CHECK_COMMAND(entitydata);
+  CHECK_COMMAND(fillbiome);
+  CHECK_COMMAND(locatebiome);
+  CHECK_COMMAND(placefeature);
+  CHECK_COMMAND(replaceitem);
+  CHECK_COMMAND(ride);
 };
 
 void load_commands(zip_t* zip, const char* namespace_name, const char* filename, char* content, struct analysis_data *data, struct analyzer_results *results) {
