@@ -3,10 +3,10 @@
 #include <string.h>
 
 #define COMMAND_DIAGNOSTIC_RANGE(CONTEXT, TYPE, VALUE, MIN_VERSION, MAX_VERSION) \
-  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, namespace_file_string(CONTEXT->namespace_name, context->filename + 1), context->line_number, context->column, MIN_VERSION, MAX_VERSION)
+  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, namespace_file_string(CONTEXT->namespace_name, CONTEXT->filename + 1), CONTEXT->line_number, CONTEXT->column, MIN_VERSION, MAX_VERSION)
 
 #define COMMAND_DIAGNOSTIC(CONTEXT, TYPE, VALUE) \
-  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, namespace_file_string(CONTEXT->namespace_name, context->filename + 1), context->line_number, context->column, NULL, NULL)
+  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, namespace_file_string(CONTEXT->namespace_name, CONTEXT->filename + 1), CONTEXT->line_number, CONTEXT->column, NULL, NULL)
 
 #define COMMAND(NAME) void load_command_##NAME(zip_t* zip, struct command_load_context* context)
 #define CHECK_COMMAND(NAME) if(command_length == strlen(#NAME) && memcmp(line, #NAME, command_length) == 0) { load_command_##NAME(zip, context); return; }
