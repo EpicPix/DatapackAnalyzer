@@ -9,6 +9,7 @@
 #include <string.h>
 #include <zip.h>
 #include "write_file.h"
+#include "zip/zip.h"
 
 void write_results(struct analyzer_results* results, struct file_result_data *file) {
   write32(file, VERSION_COUNT);
@@ -44,6 +45,8 @@ int main(int argc, char **argv) {
     result_data = calloc(sizeof(struct file_result_data), 1);
     result_data->file = result_fd;
   }
+
+  zip_file_open(argv[1]);
 
   zip_t *zip = zip_open(argv[1], ZIP_RDONLY, NULL);
   if (!zip)
