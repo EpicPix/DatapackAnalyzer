@@ -11,9 +11,15 @@
 #include "write_file.h"
 
 void write_results(struct analyzer_results* results, struct file_result_data *file) {
+  write32(file, VERSION_COUNT);
+  for(int i = 0; i<VERSION_COUNT; i++) {
+    writestr(file, VERSIONS[i].version_name);
+    write16(file, VERSIONS[i].index);
+  }
+
   write32(file, results->diagnostics_count);
-  for(int j = 0; j<results->diagnostics_count; j++) {
-    struct diagnostics_info* diagnostic = &results->diagnostics[j];
+  for(int i = 0; i<results->diagnostics_count; i++) {
+    struct diagnostics_info* diagnostic = &results->diagnostics[i];
     write8(file, diagnostic->type);
     write16(file, diagnostic->min_version);
     write16(file, diagnostic->max_version);
