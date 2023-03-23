@@ -6,8 +6,6 @@
 #include <string.h>
 
 void analyzer_add_diagnostic_range_msg_file_loc(struct analyzer_results *results, enum diagnostic_type type, const char* message, char* file, int line, int column, const char* min_version, const char* max_version) {
-  uint16_t min = version_index(min_version);
-  uint16_t max = version_index(max_version);
   struct diagnostics_info* diagnostic = diagnostic_create_source_loc(type, message, file, line, column, min_version, max_version);
   analyzer_add_diagnostic_specific(results, diagnostic);
   if(file) free(file);

@@ -296,7 +296,6 @@ COMMAND(worldborder) {
 }
 
 command_ast* load_command(zip_t* zip, struct command_load_context* context) {
-  struct analyzer_results *results = context->results;
   const char* line = context->line;
 
   int command_length = 0;
@@ -415,7 +414,7 @@ void load_commands(zip_t* zip, const char* namespace_name, const char* filename,
           .data = data,
           .results = results,
       };
-      command_ast* ast = load_command(zip, &context);
+      load_command(zip, &context);
       content[end] = endChar;
     }
   }
