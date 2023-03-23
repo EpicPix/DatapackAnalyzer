@@ -1,7 +1,7 @@
 #include "versions.h"
 #include <string.h>
 
-int version_index(const char *name) {
+uint16_t version_index(const char *name) {
   if (name == NULL)
     return -1;
   for (int i = 0; i < VERSION_COUNT; i++) {
@@ -11,6 +11,17 @@ int version_index(const char *name) {
   }
   return -1;
 }
+
+const struct version_info* version_from_index(uint16_t index) {
+  if (index == 0xffff)
+    return NULL;
+  for (int i = 0; i < VERSION_COUNT; i++) {
+    if (VERSIONS[i].index == index) {
+      return &VERSIONS[i];
+    }
+  }
+  return NULL;
+};
 
 const struct version_info* version_info(const char *name) {
   if (name == NULL)

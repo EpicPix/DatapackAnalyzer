@@ -1,5 +1,6 @@
 #include "analyzer/analyzer.h"
 #include "analyzer/analyzer_diagnostics.h"
+#include "diagnostics.h"
 #include "loader.h"
 #include "versions.h"
 #include <json-c/json.h>
@@ -9,19 +10,20 @@
 #include <zip.h>
 #include "write_file.h"
 
-void write_result(struct datapack_results* results, struct file_result_data *file) {
-    writestr(file, results->version->version_name);
-    write32(file, results->diagnostics_count);
-    for(int j = 0; j<results->diagnostics_count; j++) {
-      struct diagnostics_info* diagnostic = &results->diagnostics[j];
-      write8(file, diagnostic->type);
-      writestr(file, diagnostic->message);
-      writestr(file, diagnostic->source.filename);
-      if(diagnostic->source.filename) free(diagnostic->source.filename);
-      write32(file, diagnostic->source.line);
-      write32(file, diagnostic->source.column);
-    }
-};
+void write_results(struct analyzer_results* results, struct file_result_data *file) {
+  write32(file, results->diagnostics_count);
+  for(int j = 0; j<results->diagnostics_count; j++) {
+    struct diagnostics_info* diagnostic = &results->diagnostics[j];
+    write8(file, diagnostic->type);
+    write16(file, diagnostic->min_version);
+    write16(file, diagnostic->max_version);
+    writestr(file, diagnostic->message);
+    writestr(file, diagnostic->source.filename);
+    if(diagnostic->source.filename) free(diagnostic->source.filename);
+    write32(file, diagnostic->source.line);
+    write32(file, diagnostic->source.column);
+  }
+}
 
 int main(int argc, char **argv) {
   if (argc < 2) {
@@ -36,12 +38,6 @@ int main(int argc, char **argv) {
     result_data = calloc(sizeof(struct file_result_data), 1);
     result_data->file = result_fd;
   }
-  const char* specific_version_name = argc > 3 ? argv[3] : NULL;
-  const struct version_info* specific_version = version_info(specific_version_name);
-  if(specific_version_name != NULL && specific_version == NULL) {
-    printf("Unknown version: %s\n", specific_version_name);
-    return 1;
-  }
 
   zip_t *zip = zip_open(argv[1], ZIP_RDONLY, NULL);
   if (!zip)
@@ -49,37 +45,26 @@ int main(int argc, char **argv) {
 
   load_listing(zip);
 
-  struct analyzer_results *results = analyze_datapack(zip, specific_version);
-  if(result_data)
-    write16(result_data, results->version_count);
+  struct analyzer_results *results = analyze_datapack(zip);
 
-  for(int i = 0; i<results->version_count; i++) {
-    struct datapack_results* datapack_result = &results->version_results[i];
-    if(result_data) {
-      write_result(datapack_result, result_data);
-    }else {
-      printf("Analyze version: %s (%d)\n", datapack_result->version->version_name, datapack_result->diagnostics_count);
-      for(int j = 0; j<datapack_result->diagnostics_count; j++) {
-        struct diagnostics_info* diagnostic = &datapack_result->diagnostics[j];
-        if(diagnostic->source.filename != NULL) {
-          if(diagnostic->source.line != -1) {
-            if(diagnostic->source.column != -1) {
-              printf("- %d: %s, %s:%d:%d\n", diagnostic->type, diagnostic->message, diagnostic->source.filename, diagnostic->source.line, diagnostic->source.column);
-            }else {
-              printf("- %d: %s, %s:%d\n", diagnostic->type, diagnostic->message, diagnostic->source.filename, diagnostic->source.line);
-            }
-          }else {
-            printf("- %d: %s, %s\n", diagnostic->type, diagnostic->message, diagnostic->source.filename);
-          }
-          free(diagnostic->source.filename);
-        }else {
-          printf("- %d: %s\n", diagnostic->type, diagnostic->message);
-        }
+  if(result_data) {
+    write_results(results, result_data);
+  }else {
+    for(int i = 0; i<results->diagnostics_count; i++) {
+      struct diagnostics_info* diagnostic = &results->diagnostics[i];
+
+      const struct version_info* min = version_from_index(diagnostic->min_version);
+      const struct version_info* max = version_from_index(diagnostic->max_version);
+
+      if(diagnostic->source.filename != NULL) {
+        printf("- %d %s..%s: %s, %s:%d:%d\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message, diagnostic->source.filename, diagnostic->source.line, diagnostic->source.column);
+        free(diagnostic->source.filename);
+      }else {
+        printf("- %d %s..%s: %s\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message);
       }
     }
-    free(datapack_result->diagnostics);
   }
-  free(results->version_results);
+  free(results->diagnostics);
   free(results);
 
   unload_listing();
