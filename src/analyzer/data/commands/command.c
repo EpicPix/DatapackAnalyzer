@@ -401,7 +401,7 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
     while(i<max_len) {
       if(content[i++] == '\n') {
         line_number++;
-        goto do_loop;
+        break;
       }
     }
     int end = i;
