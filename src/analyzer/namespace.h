@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "../loader.h"
 
-int list_namespaces(char ***result);
+int list_namespaces(struct zip_listing_index ***result);
 
 int list_namespace_files(const char* namespace_name, char* loc, struct zip_listing_index ***result);
 #define list_namespace_files_foreach(namespace_name, loc, exec...) \

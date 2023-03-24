@@ -17,16 +17,31 @@ struct analyzer_results *analyze_datapack() {
   struct analysis_data* analysis = malloc(sizeof(struct analysis_data));
 
   int pack_format = get_pack_format();
+  const char* start_fail = NULL;
+  const char* end_fail = NULL;
   for(int v = 0; v<VERSION_COUNT; v++) {
     if(VERSIONS[v].datapack_format != pack_format) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_warn, "Pack format does not match", clone_string("pack.mcmeta"), VERSIONS[v].version_name, VERSIONS[v].version_name);
+      if(start_fail == NULL) start_fail = VERSIONS[v].version_name;
+    }else {
+      if(start_fail) {
+        analyzer_add_diagnostic_range_msg_file(results, diagnostic_warn, "Pack format does not match", clone_string("pack.mcmeta"), start_fail, NULL);
+        start_fail = NULL;
+      }
+      end_fail = VERSIONS[v].version_name;
     }
   }
+  if(end_fail) {
+    analyzer_add_diagnostic_range_msg_file(results, diagnostic_warn, "Pack format does not match", clone_string("pack.mcmeta"), NULL, end_fail);
+  }
 
-  char **result;
+  struct zip_listing_index **result;
   int count = list_namespaces(&result);
   for(int i = 0; i<count; i++) {
-    char* namespace = result[i];
+    struct zip_listing_index* index = result[i];
+    int filename_length = index->filename_size - 5 - 1;
+    char* namespace = alloca(filename_length + 1);
+    memcpy(namespace, index->filename + 5, filename_length);
+    namespace[filename_length] = '\0';
 
     if(namespace_file_exists(namespace, "damage_type/")) {
       analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'damage_type' data", namespace_file_string(namespace, "damage_type/"), NULL, "23w06a");
@@ -78,8 +93,6 @@ struct analyzer_results *analyze_datapack() {
     if(namespace_file_exists(namespace, "structures/")) {
       load_structures(namespace, analysis, results);
     }
-
-    free(result[i]);
   }
   free(result);
 

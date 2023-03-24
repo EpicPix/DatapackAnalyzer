@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int list_namespaces(char ***result) {
+int list_namespaces(struct zip_listing_index ***result) {
   int result_count = 0;
   int alloc_count = 8;
   *result = malloc(alloc_count * sizeof(char**));
@@ -27,10 +27,7 @@ int list_namespaces(char ***result) {
           alloc_count *= 2;
           *result = realloc(*result, alloc_count * sizeof(char**));
         }
-        char* namespace_name = malloc(name_length - 5);
-        memcpy(namespace_name, ename + 5, name_length - 6);
-        namespace_name[name_length - 6] = '\0';
-        (*result)[result_count++] = namespace_name;
+        (*result)[result_count++] = entry;
       }
     }
   }
