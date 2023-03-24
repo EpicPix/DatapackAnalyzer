@@ -390,19 +390,21 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
   do_loop:
     if(content[i] == '#') {
       while(i<max_len) {
-        if(content[i++] == '\n') {
+        if(content[i] == '\n') {
           line_number++;
           break;
         }
+        i++;
       }
       goto do_loop;
     }
     int start = i;
     while(i<max_len) {
-      if(content[i++] == '\n') {
+      if(content[i] == '\n') {
         line_number++;
         break;
       }
+      i++;
     }
     int end = i;
     if(end != start) {
