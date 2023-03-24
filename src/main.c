@@ -1,6 +1,5 @@
 #include "analyzer/analyzer.h"
 #include "analyzer/analyzer_diagnostics.h"
-#include "diagnostics.h"
 #include "loader.h"
 #include "versions.h"
 #include <json-c/json.h>
