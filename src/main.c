@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <zip.h>
 #include "write_file.h"
 #include "zip/zip.h"
 
@@ -46,15 +45,9 @@ int main(int argc, char **argv) {
     result_data->file = result_fd;
   }
 
-  zip_file_open(argv[1]);
+  zip_open(argv[1]);
 
-  zip_t *zip = zip_open(argv[1], ZIP_RDONLY, NULL);
-  if (!zip)
-    return 1;
-
-  load_listing(zip);
-
-  struct analyzer_results *results = analyze_datapack(zip);
+  struct analyzer_results *results = analyze_datapack();
 
   if(result_data) {
     write_results(results, result_data);
@@ -76,13 +69,11 @@ int main(int argc, char **argv) {
   free(results->diagnostics);
   free(results);
 
-  unload_listing();
-  zip_close(zip);
-
   if(result_data) {
     write_flush(result_data);
     free(result_data);
   }
+  zip_close();
   if(result_fd) {
     fclose(result_fd);
   }

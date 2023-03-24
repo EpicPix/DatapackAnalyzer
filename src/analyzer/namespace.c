@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int list_namespaces(zip_t *zip, char ***result) {
+int list_namespaces(char ***result) {
   int result_count = 0;
   int alloc_count = 8;
   *result = malloc(alloc_count * sizeof(char**));
@@ -38,7 +38,7 @@ int list_namespaces(zip_t *zip, char ***result) {
   return result_count;
 }
 
-int list_namespace_files(zip_t *zip, const char* namespace, char* loc, char ***result) {
+int list_namespace_files(const char* namespace, char* loc, struct zip_listing_index ***result) {
   int result_count = 0;
   int alloc_count = 8;
   *result = malloc(alloc_count * sizeof(char**));
@@ -60,10 +60,7 @@ int list_namespace_files(zip_t *zip, const char* namespace, char* loc, char ***r
         alloc_count *= 2;
         *result = realloc(*result, alloc_count * sizeof(char**));
       }
-      char* name = malloc(name_length - 5 - namespace_length + 1);
-      memcpy(name, ename + 5 + namespace_length, name_length - 5 - namespace_length);
-      name[name_length - 5 - namespace_length] = '\0';
-      (*result)[result_count++] = name;
+      (*result)[result_count++] = entry;
     }
   }
 
@@ -84,16 +81,16 @@ char* namespace_file_string(const char *namespace_name, const char *file_name) {
   return lookup;
 }
 
-int64_t namespace_file_size(zip_t *zip, const char *namespace_name, const char *file_name) {
+int64_t namespace_file_size(const char *namespace_name, const char *file_name) {
   char* lookup = namespace_file_string(namespace_name, file_name);
-  int size = file_size(zip, lookup);
+  int size = file_size(lookup);
   free(lookup);
   return size;
 }
 
-char* namespace_file_content(zip_t *zip, const char *namespace_name, const char *file_name) {
+char* namespace_file_content(const char *namespace_name, const char *file_name) {
   char* lookup = namespace_file_string(namespace_name, file_name);
-  char* content = load_file(zip, lookup);
+  char* content = load_file(lookup);
   free(lookup);
   return content;
 }

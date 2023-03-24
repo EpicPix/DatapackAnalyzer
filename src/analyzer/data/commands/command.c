@@ -9,9 +9,9 @@
 #define COMMAND_DIAGNOSTIC(CONTEXT, TYPE, VALUE) \
   analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, namespace_file_string(CONTEXT->namespace_name, CONTEXT->filename + 1), CONTEXT->line_number, CONTEXT->column, NULL, NULL)
 
-#define COMMAND(NAME) command_ast* load_command_##NAME(zip_t* zip, struct command_load_context* context)
-#define CHECK_COMMAND(NAME) if(command_length == strlen(#NAME) && memcmp(line, #NAME, command_length) == 0) { return load_command_##NAME(zip, context); }
-#define CHECK_COMMAND_ALIAS(ALIAS, NAME) if(command_length == strlen(#ALIAS) && memcmp(line, #ALIAS, command_length) == 0) { return load_command_##NAME(zip, context); }
+#define COMMAND(NAME) command_ast* load_command_##NAME(struct command_load_context* context)
+#define CHECK_COMMAND(NAME) if(command_length == strlen(#NAME) && memcmp(line, #NAME, command_length) == 0) { return load_command_##NAME(context); }
+#define CHECK_COMMAND_ALIAS(ALIAS, NAME) if(command_length == strlen(#ALIAS) && memcmp(line, #ALIAS, command_length) == 0) { return load_command_##NAME(context); }
 
 struct command_load_context {
   const char* namespace_name;
@@ -295,7 +295,7 @@ COMMAND(worldborder) {
   return NULL;
 }
 
-command_ast* load_command(zip_t* zip, struct command_load_context* context) {
+command_ast* load_command(struct command_load_context* context) {
   const char* line = context->line;
 
   int command_length = 0;
@@ -379,7 +379,11 @@ command_ast* load_command(zip_t* zip, struct command_load_context* context) {
   return NULL;
 };
 
-void load_commands(zip_t* zip, const char* namespace_name, const char* filename, char* content, struct analysis_data *data, struct analyzer_results *results) {
+void load_commands(const char* namespace_name, struct zip_listing_index* index, char* content, struct analysis_data *data, struct analyzer_results *results) {
+  char* filename = alloca(index->filename_size + 1);
+  memcpy(filename, index->filename, index->filename_size);
+  filename[index->filename_size] = '\0';
+
   int max_len = strlen(content);
   int line_number = 1;
   for(int i = 0; i<max_len; i++) {
@@ -414,7 +418,7 @@ void load_commands(zip_t* zip, const char* namespace_name, const char* filename,
           .data = data,
           .results = results,
       };
-      load_command(zip, &context);
+      load_command(&context);
       content[end] = endChar;
     }
   }
