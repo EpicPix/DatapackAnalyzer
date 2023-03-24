@@ -390,14 +390,14 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
   do_loop:
     if(content[i] == '#') {
       while(i<max_len) {
-        if(content[i] == '\n') {
+        if(content[i++] == '\n') {
           line_number++;
-          break;
+          goto do_loop;
         }
-        i++;
       }
       goto do_loop;
     }
+    int pre_line_number = line_number;
     int start = i;
     while(i<max_len) {
       if(content[i] == '\n') {
@@ -413,7 +413,7 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
       struct command_load_context context = {
           .namespace_name = namespace_name,
           .filename = filename,
-          .line_number = line_number,
+          .line_number = pre_line_number,
           .column = 1,
           .line = content + start,
           .line_length = end - start,
