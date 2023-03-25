@@ -379,7 +379,24 @@ command_ast* load_command(struct command_load_context* context) {
   return NULL;
 };
 
-void load_commands(const char* namespace_name, struct zip_listing_index* index, char* content, struct analysis_data *data, struct analyzer_results *results) {
+static void command_load(const char* namespace_name, const char* filename, int line_number, int column, const char* start, int length, struct analysis_data *data, struct analyzer_results *results) {
+  char* line = alloca(length + 1);
+  memcpy(line, start, length);
+  line[length] = '\0';
+  struct command_load_context context = {
+      .namespace_name = namespace_name,
+      .filename = filename,
+      .line_number = line_number,
+      .column = column,
+      .line = start,
+      .line_length = length,
+      .data = data,
+      .results = results,
+  };
+  load_command(&context);
+}
+
+void load_commands(const char* namespace_name, struct zip_listing_index* index, const char* content, struct analysis_data *data, struct analyzer_results *results) {
   char* filename = alloca(index->filename_size + 1);
   memcpy(filename, index->filename, index->filename_size);
   filename[index->filename_size] = '\0';
@@ -408,20 +425,7 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
     }
     int end = i;
     if(end != start) {
-      char endChar = content[end];
-      content[end] = '\0';
-      struct command_load_context context = {
-          .namespace_name = namespace_name,
-          .filename = filename,
-          .line_number = pre_line_number,
-          .column = 1,
-          .line = content + start,
-          .line_length = end - start,
-          .data = data,
-          .results = results,
-      };
-      load_command(&context);
-      content[end] = endChar;
+      command_load(namespace_name, filename, pre_line_number, 1, content + start, end - start, data, results);
     }
   }
 };
