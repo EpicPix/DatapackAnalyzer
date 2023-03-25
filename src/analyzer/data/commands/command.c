@@ -1,5 +1,6 @@
 #include "commands.h"
 #include "command_ast.h"
+#include "command_parser.h"
 #include "../../namespace.h"
 #include <string.h>
 
