@@ -3,6 +3,7 @@
 #include "command_parser.h"
 #include "../../namespace.h"
 #include <string.h>
+#include <stdio.h>
 
 #define COMMAND_DIAGNOSTIC_RANGE(CONTEXT, TYPE, VALUE, MIN_VERSION, MAX_VERSION) \
   analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, clone_string(CONTEXT->filename), CONTEXT->line_number, CONTEXT->column, MIN_VERSION, MAX_VERSION)
@@ -19,8 +20,7 @@ struct command_load_context {
   const char* filename;
   int line_number;
   int column;
-  const char* line;
-  int line_length;
+  command_parser parser;
   struct analysis_data *data;
   struct analyzer_results *results;
 };
@@ -297,16 +297,22 @@ COMMAND(worldborder) {
 }
 
 command_ast* load_command(struct command_load_context* context) {
-  const char* line = context->line;
+  command_ast_result res = command_parser_word(&context->parser);
+  printf("%d %s\n", res.has_error, res.error_message);
 
-  int command_length = 0;
-  while(command_length < context->line_length) {
-    char c = line[command_length];
-    if(c == ' ' || c == '\t') {
-      break;
-    }
-    command_length++;
-  }
+  const char* line = "advancement";
+  int command_length = strlen(line);
+
+//  const char* line = context->line;
+//
+//  int command_length = 0;
+//  while(command_length < context->line_length) {
+//    char c = line[command_length];
+//    if(c == ' ' || c == '\t') {
+//      break;
+//    }
+//    command_length++;
+//  }
 
   CHECK_COMMAND(advancement);
   CHECK_COMMAND(attribute);
@@ -389,8 +395,11 @@ static void command_load(const char* namespace_name, const char* filename, int l
       .filename = filename,
       .line_number = line_number,
       .column = column,
-      .line = start,
-      .line_length = length,
+      .parser = {
+          .line = line,
+          .line_length = length,
+          .offset = 0
+      },
       .data = data,
       .results = results,
   };

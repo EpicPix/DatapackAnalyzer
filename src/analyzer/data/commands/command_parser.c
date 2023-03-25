@@ -1,5 +1,5 @@
 #include "command_parser.h"
 
-command_ast command_parser_word(command_parser parser) {
-  return (command_ast){ 0 };
+command_ast_result command_parser_word(command_parser* parser) {
+  return COMMAND_AST_ERROR("This function is not yet supported");
 }
