@@ -133,6 +133,7 @@ COMMAND(gamemode) {
 }
 
 COMMAND(gamerule) {
+  context->column = context->parser.offset + 1;
   command_ast_value_result res = command_parser_word(&context->parser);
   if(res.has_error) {
     COMMAND_DIAGNOSTIC(context, diagnostic_error, res.error_message);
@@ -360,8 +361,6 @@ command_ast_value* load_command(struct command_load_context* context) {
     COMMAND_DIAGNOSTIC(context, diagnostic_error, res.error_message);
     return NULL;
   }
-  int line_start = context->column;
-  context->column = context->parser.offset + 1;
 
   const char* line = context->parser.line + res.ast.t_word.start;
   int command_length = res.ast.t_word.length;
@@ -437,7 +436,6 @@ command_ast_value* load_command(struct command_load_context* context) {
   CHECK_COMMAND_ALIAS(w, tell);
   CHECK_COMMAND_ALIAS(xp, experience);
 
-  context->column = line_start;
   COMMAND_DIAGNOSTIC(context, diagnostic_error, "Command is not supported");
   return NULL;
 };
@@ -459,6 +457,9 @@ static void command_load(const char* namespace_name, const char* filename, int l
       .data = data,
       .results = results,
   };
+  while(context.parser.offset < context.parser.line_length && line[context.parser.offset] == ' ') {
+    context.parser.offset++;
+  }
   load_command(&context);
 }
 
