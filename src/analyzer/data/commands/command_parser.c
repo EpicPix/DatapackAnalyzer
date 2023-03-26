@@ -157,6 +157,11 @@ command_ast_value_result command_parser_string(command_parser* parser) {
     }else if(line[parser->offset] == end_char) {
       int end = parser->offset;
       parser->offset++;
+      if(parser->offset < parser->line_length) {
+        if(line[parser->offset++] != ' ') {
+          return COMMAND_AST_ERROR("Expected space after string");
+        }
+      }
       return COMMAND_AST_STRING(start, end - start);
     }
     parser->offset++;
