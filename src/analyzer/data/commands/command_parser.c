@@ -1,4 +1,5 @@
 #include "command_parser.h"
+#include <string.h>
 
 command_ast_value_result command_parser_word(command_parser* parser) {
   const char* line = parser->line;
@@ -77,9 +78,25 @@ command_ast_value_result command_parser_identifier(command_parser* parser) {
 command_ast_value_result command_parser_boolean(command_parser* parser) {
   const char* line = parser->line;
 
-  if(parser->offset + 4 > parser->line_length) {
+  if(parser->offset > parser->line_length) {
+    return COMMAND_AST_ERROR("Reached end of line before input");
+  }
+
+  if(line[parser->offset] == '"' || line[parser->offset] == '\'') {
+    command_ast_value_result res = command_parser_string(parser);
+    if(res.has_error) return res;
+    if(res.ast.t_string.length == 4) {
+      if(memcmp(line + res.ast.t_string.start, "true", 4) == 0) {
+        return COMMAND_AST_BOOLEAN(res.ast.t_string.start, res.ast.t_string.length, true, true);
+      }
+    }else if(res.ast.t_string.length == 5) {
+      if(memcmp(line + res.ast.t_string.start, "false", 5) == 0) {
+        return COMMAND_AST_BOOLEAN(res.ast.t_string.start, res.ast.t_string.length, false, true);
+      }
+    }
     goto error;
   }
+
   int start = parser->offset;
   if(line[start] == 'f') {
     if(parser->offset + 5 > parser->line_length) {
@@ -96,6 +113,9 @@ command_ast_value_result command_parser_boolean(command_parser* parser) {
     }
     return COMMAND_AST_BOOLEAN(start, start + 5, false, false);
   }else if(line[start] == 't') {
+    if(parser->offset + 4 > parser->line_length) {
+      goto error;
+    }
     if(line[start+1] != 'r' || line[start+2] != 'u' || line[start+3] != 'e') {
       goto error;
     }
@@ -110,4 +130,36 @@ command_ast_value_result command_parser_boolean(command_parser* parser) {
 
 error:
   return COMMAND_AST_ERROR("Invalid boolean");
+}
+
+command_ast_value_result command_parser_string(command_parser* parser) {
+  const char* line = parser->line;
+  if(parser->offset > parser->line_length) {
+    return COMMAND_AST_ERROR("String end of line");
+  }
+  if(line[parser->offset] != '"' && line[parser->offset] != '\'') {
+    command_ast_value_result res = command_parser_word(parser);
+    if(res.has_error) return res;
+    return COMMAND_AST_STRING(res.ast.t_word.start, res.ast.t_word.length);
+  }
+  char end_char = line[parser->offset];
+  parser->offset++;
+  int start = parser->offset;
+  bool escape_seq = false;
+  while(parser->offset < parser->line_length) {
+    if(line[parser->offset] == '\\') {
+      escape_seq = true;
+    }else if(escape_seq) {
+      if(line[parser->offset] != end_char) {
+        return COMMAND_AST_ERROR("Invalid string escape sequence");
+      }
+      escape_seq = false;
+    }else if(line[parser->offset] == end_char) {
+      int end = parser->offset;
+      parser->offset++;
+      return COMMAND_AST_STRING(start, end - start);
+    }
+    parser->offset++;
+  }
+  return COMMAND_AST_ERROR("String reached end of line before end quote");
 }

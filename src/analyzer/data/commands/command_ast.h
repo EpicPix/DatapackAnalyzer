@@ -9,6 +9,7 @@ typedef enum command_ast_value_type {
   COMMAND_AST_VALUE_TYPE_BOOL = 2,
   COMMAND_AST_VALUE_TYPE_INTEGER = 3,
   COMMAND_AST_VALUE_TYPE_LONG = 4,
+  COMMAND_AST_VALUE_TYPE_STRING = 5,
 } command_ast_value_type;
 
 struct command_ast_value_word {
@@ -42,6 +43,11 @@ struct command_ast_value_long {
   int64_t value;
 };
 
+struct command_ast_value_string {
+  int start;
+  int length;
+};
+
 typedef struct command_ast_value {
   union {
     struct command_ast_value_word t_word;
@@ -49,6 +55,7 @@ typedef struct command_ast_value {
     struct command_ast_value_bool t_bool;
     struct command_ast_value_integer t_int;
     struct command_ast_value_long t_long;
+    struct command_ast_value_string t_string;
   };
   command_ast_value_type type;
 } command_ast_value;

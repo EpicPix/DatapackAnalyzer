@@ -22,7 +22,9 @@ typedef struct command_ast_value_result {
 #define COMMAND_AST_BOOLEAN(START, LENGTH, VALUE, IN_STRING) ((command_ast_value_result) { .has_error = false, .ast = { .type = COMMAND_AST_VALUE_TYPE_BOOL, .t_bool = { .start = START, .length = LENGTH, .value = VALUE, .in_string = IN_STRING } } })
 #define COMMAND_AST_INTEGER(START, LENGTH, VALUE) ((command_ast_value_result) { .has_error = false, .ast = { .type = COMMAND_AST_VALUE_TYPE_INTEGER, .t_int = { .start = START, .length = LENGTH, .value = VALUE } } })
 #define COMMAND_AST_LONG(START, LENGTH, VALUE) ((command_ast_value_result) { .has_error = false, .ast = { .type = COMMAND_AST_VALUE_TYPE_LONG, .t_long = { .start = START, .length = LENGTH, .value = VALUE } } })
+#define COMMAND_AST_STRING(START, LENGTH) ((command_ast_value_result) { .has_error = false, .ast = { .type = COMMAND_AST_VALUE_TYPE_STRING, .t_long = { .start = START, .length = LENGTH } } })
 
 command_ast_value_result command_parser_word(command_parser* parser);
 command_ast_value_result command_parser_identifier(command_parser* parser);
 command_ast_value_result command_parser_boolean(command_parser* parser);
+command_ast_value_result command_parser_string(command_parser* parser);
