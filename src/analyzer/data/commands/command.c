@@ -328,16 +328,11 @@ COMMAND(worldborder) {
 }
 
 COMMAND(__debug_test) {
-  command_ast_value_result res = command_parser_identifier(&context->parser);
+  command_ast_value_result res = command_parser_boolean(&context->parser);
   if(res.has_error) {
     printf("%s\n", res.error_message);
   }else {
-    if(res.ast.t_identifier.namespace_start != -1) {
-      printf("Namespace: ");
-      PRINT_LEN_STRING(context->parser.line + res.ast.t_identifier.namespace_start, res.ast.t_identifier.namespace_length);
-    }
-    printf("Location: ");
-    PRINT_LEN_STRING(context->parser.line + res.ast.t_identifier.identifier_start, res.ast.t_identifier.identifier_length);
+    printf("Value: %d %d\n", res.ast.t_bool.value, res.ast.t_bool.in_string);
   }
   return NULL;
 }

@@ -27,6 +27,7 @@ struct command_ast_value_bool {
   int start;
   int length;
   bool value;
+  bool in_string;
 };
 
 struct command_ast_value_integer {

@@ -94,7 +94,7 @@ command_ast_value_result command_parser_boolean(command_parser* parser) {
         goto error;
       }
     }
-    return COMMAND_AST_BOOLEAN(start, start + 5, false);
+    return COMMAND_AST_BOOLEAN(start, start + 5, false, false);
   }else if(line[start] == 't') {
     if(line[start+1] != 'r' || line[start+2] != 'u' || line[start+3] != 'e') {
       goto error;
@@ -105,7 +105,7 @@ command_ast_value_result command_parser_boolean(command_parser* parser) {
         goto error;
       }
     }
-    return COMMAND_AST_BOOLEAN(start, start + 4, true);
+    return COMMAND_AST_BOOLEAN(start, start + 4, true, false);
   }
 
 error:
