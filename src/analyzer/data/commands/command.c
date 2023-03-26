@@ -452,7 +452,7 @@ static void command_load(const char* namespace_name, const char* filename, int l
       .parser = {
           .line = line,
           .line_length = length,
-          .offset = 0
+          .offset = column - 1
       },
       .data = data,
       .results = results,
@@ -470,8 +470,17 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
 
   int max_len = strlen(content);
   int line_number = 1;
-  for(int i = 0; i<max_len; i++) {
-  do_loop:
+  for(int i = 0; i<max_len; i++)
+  do_loop: {
+    int offset = 0;
+    while(i<max_len) {
+      if(content[i] == ' ') {
+        i++;
+        offset++;
+      }else {
+        break;
+      }
+    }
     if(content[i] == '#') {
       while(i<max_len) {
         if(content[i++] == '\n') {
@@ -482,7 +491,7 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
       goto do_loop;
     }
     int pre_line_number = line_number;
-    int start = i;
+    int start = i - offset;
     while(i<max_len) {
       if(content[i] == '\n') {
         line_number++;
@@ -492,7 +501,7 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
     }
     int end = i;
     if(end != start) {
-      command_load(namespace_name, filename, pre_line_number, 1, content + start, end - start, data, results);
+      command_load(namespace_name, filename, pre_line_number, 1 + offset, content + start, end - start, data, results);
     }
   }
 };
