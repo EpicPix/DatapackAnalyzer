@@ -25,3 +25,4 @@ typedef struct command_ast_value_result {
 
 command_ast_value_result command_parser_word(command_parser* parser);
 command_ast_value_result command_parser_identifier(command_parser* parser);
+command_ast_value_result command_parser_boolean(command_parser* parser);

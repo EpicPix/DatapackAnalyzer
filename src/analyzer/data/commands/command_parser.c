@@ -73,3 +73,41 @@ command_ast_value_result command_parser_identifier(command_parser* parser) {
 
   return COMMAND_AST_IDENTIFIER(namespace_start, namespace_length, start, length);
 }
+
+command_ast_value_result command_parser_boolean(command_parser* parser) {
+  const char* line = parser->line;
+
+  if(parser->offset + 4 > parser->line_length) {
+    goto error;
+  }
+  int start = parser->offset;
+  if(line[start] == 'f') {
+    if(parser->offset + 5 > parser->line_length) {
+      goto error;
+    }
+    if(line[start+1] != 'a' || line[start+2] != 'l' || line[start+3] != 's' || line[start+4] != 'e') {
+      goto error;
+    }
+    parser->offset += 5;
+    if(parser->offset < parser->line_length) {
+      if(line[parser->offset++] != ' ') {
+        goto error;
+      }
+    }
+    return COMMAND_AST_BOOLEAN(start, start + 5, false);
+  }else if(line[start] == 't') {
+    if(line[start+1] != 'r' || line[start+2] != 'u' || line[start+3] != 'e') {
+      goto error;
+    }
+    parser->offset += 4;
+    if(parser->offset < parser->line_length) {
+      if(line[parser->offset++] != ' ') {
+        goto error;
+      }
+    }
+    return COMMAND_AST_BOOLEAN(start, start + 4, true);
+  }
+
+error:
+  return COMMAND_AST_ERROR("Invalid boolean");
+}
