@@ -1,0 +1,59 @@
+#include "gamerules.h"
+#include <stdlib.h>
+
+#define GAMERULE(NAME, TYPE, MIN_VERSION, MAX_VERSION)                         \
+  {                                                                            \
+    .type = TYPE, .name = NAME, .min_version = MIN_VERSION,                    \
+    .max_version = MAX_VERSION                                                 \
+  }
+
+const struct data_type_gamerule GAMERULES[] = {
+    GAMERULE("doFireTick", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("mobGriefing", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("keepInventory", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("doMobSpawning", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("doMobLoot", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("doTileDrops", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("commandBlockOutput", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("naturalRegeneration", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("doDaylightCycle", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("logAdminCommands", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("showDeathMessages", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("randomTickSpeed", DATA_TYPE_GAMERULE_TYPE_INTEGER, NULL, NULL),
+    GAMERULE("showCommandFeedback", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("reducedDebugInfo", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("doEntityDrops", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("spectatorsGenerateChunks", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("spawnRadius", DATA_TYPE_GAMERULE_TYPE_INTEGER, NULL, NULL),
+    GAMERULE("disableElytraMovementCheck", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("doWeatherCycle", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("maxEntityCramming", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("doLimitedCrafting", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+    GAMERULE("maxCommandChainLength", DATA_TYPE_GAMERULE_TYPE_INTEGER, NULL, NULL),
+    GAMERULE("aannounceAdvancements", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, NULL, NULL),
+//    GAMERULE("gameLoopFunction", DATA_TYPE_GAMERULE_TYPE_, NULL, "17w49b"), // was this a string?
+    GAMERULE("disableRaids", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "1.14 Pre-Release 3", NULL),
+    GAMERULE("doInsomnia", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "19w36a", NULL),
+    GAMERULE("doImmediateRespawn", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "19w36a", NULL),
+    GAMERULE("drowningDamage", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "19w36a", NULL),
+    GAMERULE("fallDamage", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "19w36a", NULL),
+    GAMERULE("fireDamage", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "19w36a", NULL),
+    GAMERULE("doPatrolSpawning", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "1.15.2-pre1", NULL),
+    GAMERULE("doTraderSpawning", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "1.15.2-pre1", NULL),
+    GAMERULE("universalAnger", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "1.16-pre1", NULL),
+    GAMERULE("forgiveDeadPlayers", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "1.16-pre1", NULL),
+    GAMERULE("freezeDamage", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "20w48a", NULL),
+    GAMERULE("playersSleepingPercentage", DATA_TYPE_GAMERULE_TYPE_INTEGER, "20w51a", NULL),
+    GAMERULE("doWardenSpawning", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "22w16a", NULL),
+    GAMERULE("blockExplosionDropDecay", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "22w44a", NULL),
+    GAMERULE("mobExplosionDropDecay", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "22w44a", NULL),
+    GAMERULE("tntExplosionDropDecay", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "22w44a", NULL),
+    GAMERULE("snowAccumulationHeight", DATA_TYPE_GAMERULE_TYPE_INTEGER, "22w44a", NULL),
+    GAMERULE("waterSourceConversion", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "22w44a", NULL),
+    GAMERULE("lavaSourceConversion", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "22w44a", NULL),
+    GAMERULE("globalSoundEvents", DATA_TYPE_GAMERULE_TYPE_BOOLEAN, "22w44a", NULL),
+    GAMERULE("commandModificationBlockLimit", DATA_TYPE_GAMERULE_TYPE_INTEGER, "23w03a", NULL),
+    GAMERULE("doVinesSpread", DATA_TYPE_GAMERULE_TYPE_INTEGER, "23w06a", NULL),
+};
+
+const int GAMERULE_COUNT = sizeof(GAMERULES) / sizeof(struct data_type_gamerule);
