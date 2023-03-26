@@ -15,6 +15,14 @@
 #define CHECK_COMMAND(NAME) if(command_length == strlen(#NAME) && memcmp(line, #NAME, command_length) == 0) { return load_command_##NAME(context); }
 #define CHECK_COMMAND_ALIAS(ALIAS, NAME) if(command_length == strlen(#ALIAS) && memcmp(line, #ALIAS, command_length) == 0) { return load_command_##NAME(context); }
 
+#define PRINT_LEN_STRING(STRING, LENGTH) \
+{ \
+  char* LenString = alloca(LENGTH + 1); \
+  memcpy(LenString, STRING, LENGTH); \
+  LenString[LENGTH] = '\0'; \
+  printf("%s\n", LenString); \
+}
+
 struct command_load_context {
   const char* namespace_name;
   const char* filename;
@@ -296,16 +304,35 @@ COMMAND(worldborder) {
   return NULL;
 }
 
+COMMAND(__debug_test) {
+  command_ast_result res = command_parser_identifier(&context->parser);
+  if(res.has_error) {
+    printf("%s\n", res.error_message);
+  }else {
+    if(res.ast.data.identifier.namespace_start != -1) {
+      printf("Namespace: ");
+      PRINT_LEN_STRING(context->parser.line + res.ast.data.identifier.namespace_start, res.ast.data.identifier.namespace_length);
+    }
+    printf("Location: ");
+    PRINT_LEN_STRING(context->parser.line + res.ast.data.identifier.identifier_start, res.ast.data.identifier.identifier_length);
+  }
+  return NULL;
+}
+
 command_ast* load_command(struct command_load_context* context) {
   command_ast_result res = command_parser_word(&context->parser);
   if(res.has_error) {
     COMMAND_DIAGNOSTIC(context, diagnostic_error, clone_string(res.error_message));
     return NULL;
   }
+  int line_start = context->column;
   context->column = context->parser.offset + 1;
 
   const char* line = context->parser.line + res.ast.data.word.start;
   int command_length = res.ast.data.word.length;
+
+  CHECK_COMMAND(__debug_test);
+
 
   CHECK_COMMAND(advancement);
   CHECK_COMMAND(attribute);
@@ -375,6 +402,7 @@ command_ast* load_command(struct command_load_context* context) {
   CHECK_COMMAND_ALIAS(w, tell);
   CHECK_COMMAND_ALIAS(xp, experience);
 
+  context->column = line_start;
   COMMAND_DIAGNOSTIC(context, diagnostic_error, "Command is not supported");
   return NULL;
 };
