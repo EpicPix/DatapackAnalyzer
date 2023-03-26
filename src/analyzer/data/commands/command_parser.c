@@ -64,8 +64,11 @@ command_ast_result command_parser_identifier(command_parser* parser) {
     parser->offset++;
     length++;
   }
+  if(namespace_start != -1 && namespace_length == 0) {
+    return COMMAND_AST_ERROR("Namespace cannot be empty when `:` is present");
+  }
   if(length == 0) {
-    return COMMAND_AST_ERROR("Read empty identifier");
+    return COMMAND_AST_ERROR("Expected a location in resource location");
   }
 
   return COMMAND_AST_IDENTIFIER(namespace_start, namespace_length, start, length);
