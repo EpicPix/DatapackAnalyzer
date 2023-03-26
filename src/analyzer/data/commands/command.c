@@ -143,8 +143,8 @@ COMMAND(gamerule) {
   for(int i = 0; i<GAMERULE_COUNT; i++) {
     const struct data_type_gamerule* gamerule = &GAMERULES[i];
     int gamerule_len = strlen(gamerule->name);
-    if(res.ast.data.word.length != gamerule_len) continue;
-    if(memcmp(context->parser.line + res.ast.data.word.start, gamerule->name, gamerule_len) != 0) continue;
+    if(res.ast.t_word.length != gamerule_len) continue;
+    if(memcmp(context->parser.line + res.ast.t_word.start, gamerule->name, gamerule_len) != 0) continue;
     found_gamerule = gamerule;
     break;
   }
@@ -332,12 +332,12 @@ COMMAND(__debug_test) {
   if(res.has_error) {
     printf("%s\n", res.error_message);
   }else {
-    if(res.ast.data.identifier.namespace_start != -1) {
+    if(res.ast.t_identifier.namespace_start != -1) {
       printf("Namespace: ");
-      PRINT_LEN_STRING(context->parser.line + res.ast.data.identifier.namespace_start, res.ast.data.identifier.namespace_length);
+      PRINT_LEN_STRING(context->parser.line + res.ast.t_identifier.namespace_start, res.ast.t_identifier.namespace_length);
     }
     printf("Location: ");
-    PRINT_LEN_STRING(context->parser.line + res.ast.data.identifier.identifier_start, res.ast.data.identifier.identifier_length);
+    PRINT_LEN_STRING(context->parser.line + res.ast.t_identifier.identifier_start, res.ast.t_identifier.identifier_length);
   }
   return NULL;
 }
@@ -351,8 +351,8 @@ command_ast_value* load_command(struct command_load_context* context) {
   int line_start = context->column;
   context->column = context->parser.offset + 1;
 
-  const char* line = context->parser.line + res.ast.data.word.start;
-  int command_length = res.ast.data.word.length;
+  const char* line = context->parser.line + res.ast.t_word.start;
+  int command_length = res.ast.t_word.length;
 
   CHECK_COMMAND(__debug_test);
 
