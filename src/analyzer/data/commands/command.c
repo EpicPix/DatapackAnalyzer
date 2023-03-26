@@ -3,6 +3,7 @@
 #include "command_parser.h"
 #include "../../../data_types/gamerules.h"
 #include "../../namespace.h"
+#include "diagnostics.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -152,8 +153,25 @@ COMMAND(gamerule) {
     COMMAND_DIAGNOSTIC(context, diagnostic_error, "Provided gamerule does not exist");
     return NULL;
   }
-
+  if(found_gamerule->min_version != NULL) {
+    COMMAND_DIAGNOSTIC_RANGE(context, diagnostic_error, "Gamerule does not exist", found_gamerule->max_version, found_gamerule->min_version);
+  }
   context->column = context->parser.offset + 1;
+  if(context->parser.offset != context->parser.line_length) {
+    if(found_gamerule->type == DATA_TYPE_GAMERULE_TYPE_BOOLEAN) {
+      res = command_parser_boolean(&context->parser);
+      if(res.has_error) {
+        COMMAND_DIAGNOSTIC(context, diagnostic_error, res.error_message);
+        return NULL;
+      }
+      if(res.ast.t_bool.in_string) {
+        COMMAND_DIAGNOSTIC(context, diagnostic_info, "Write booleans without quotes");
+      }
+      return NULL;
+    }else if(found_gamerule->type == DATA_TYPE_GAMERULE_TYPE_INTEGER) {
+
+    }
+  }
 
   return NULL;
 }
