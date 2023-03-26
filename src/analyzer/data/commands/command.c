@@ -298,21 +298,13 @@ COMMAND(worldborder) {
 
 command_ast* load_command(struct command_load_context* context) {
   command_ast_result res = command_parser_word(&context->parser);
-  printf("%d %s\n", res.has_error, res.error_message);
+  if(res.has_error) {
+    COMMAND_DIAGNOSTIC(context, diagnostic_error, clone_string(res.error_message));
+    return NULL;
+  }
 
-  const char* line = "advancement";
-  int command_length = strlen(line);
-
-//  const char* line = context->line;
-//
-//  int command_length = 0;
-//  while(command_length < context->line_length) {
-//    char c = line[command_length];
-//    if(c == ' ' || c == '\t') {
-//      break;
-//    }
-//    command_length++;
-//  }
+  const char* line = context->parser.line + res.ast.data.word.start;
+  int command_length = res.ast.data.word.length;
 
   CHECK_COMMAND(advancement);
   CHECK_COMMAND(attribute);
