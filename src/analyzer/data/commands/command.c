@@ -3,7 +3,6 @@
 #include "command_parser.h"
 #include "../../../data_types/gamerules.h"
 #include "../../namespace.h"
-#include "diagnostics.h"
 #include <string.h>
 #include <stdio.h>
 
