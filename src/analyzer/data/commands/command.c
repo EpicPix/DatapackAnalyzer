@@ -302,6 +302,7 @@ command_ast* load_command(struct command_load_context* context) {
     COMMAND_DIAGNOSTIC(context, diagnostic_error, clone_string(res.error_message));
     return NULL;
   }
+  context->column = context->parser.offset + 1;
 
   const char* line = context->parser.line + res.ast.data.word.start;
   int command_length = res.ast.data.word.length;
