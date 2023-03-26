@@ -11,7 +11,7 @@
 #define COMMAND_DIAGNOSTIC(CONTEXT, TYPE, VALUE) \
   analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, clone_string(CONTEXT->filename), CONTEXT->line_number, CONTEXT->column, NULL, NULL)
 
-#define COMMAND(NAME) command_ast* load_command_##NAME(struct command_load_context* context)
+#define COMMAND(NAME) command_ast_value* load_command_##NAME(struct command_load_context* context)
 #define CHECK_COMMAND(NAME) if(command_length == strlen(#NAME) && memcmp(line, #NAME, command_length) == 0) { return load_command_##NAME(context); }
 #define CHECK_COMMAND_ALIAS(ALIAS, NAME) if(command_length == strlen(#ALIAS) && memcmp(line, #ALIAS, command_length) == 0) { return load_command_##NAME(context); }
 
@@ -305,7 +305,7 @@ COMMAND(worldborder) {
 }
 
 COMMAND(__debug_test) {
-  command_ast_result res = command_parser_identifier(&context->parser);
+  command_ast_value_result res = command_parser_identifier(&context->parser);
   if(res.has_error) {
     printf("%s\n", res.error_message);
   }else {
@@ -319,8 +319,8 @@ COMMAND(__debug_test) {
   return NULL;
 }
 
-command_ast* load_command(struct command_load_context* context) {
-  command_ast_result res = command_parser_word(&context->parser);
+command_ast_value* load_command(struct command_load_context* context) {
+  command_ast_value_result res = command_parser_word(&context->parser);
   if(res.has_error) {
     COMMAND_DIAGNOSTIC(context, diagnostic_error, clone_string(res.error_message));
     return NULL;

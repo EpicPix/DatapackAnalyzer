@@ -1,6 +1,6 @@
 #include "command_parser.h"
 
-command_ast_result command_parser_word(command_parser* parser) {
+command_ast_value_result command_parser_word(command_parser* parser) {
   const char* line = parser->line;
 
   int length = 0;
@@ -26,7 +26,7 @@ command_ast_result command_parser_word(command_parser* parser) {
   return COMMAND_AST_WORD(start, length);
 }
 
-command_ast_result command_parser_identifier(command_parser* parser) {
+command_ast_value_result command_parser_identifier(command_parser* parser) {
   const char* line = parser->line;
 
   int namespace_length = 0;
