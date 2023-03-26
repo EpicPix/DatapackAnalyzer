@@ -1,6 +1,7 @@
 #include "commands.h"
 #include "command_ast.h"
 #include "command_parser.h"
+#include "../../../data_types/gamerules.h"
 #include "../../namespace.h"
 #include <string.h>
 #include <stdio.h>
@@ -132,6 +133,28 @@ COMMAND(gamemode) {
 }
 
 COMMAND(gamerule) {
+  command_ast_value_result res = command_parser_word(&context->parser);
+  if(res.has_error) {
+    COMMAND_DIAGNOSTIC(context, diagnostic_error, res.error_message);
+    return NULL;
+  }
+
+  const struct data_type_gamerule* found_gamerule = NULL;
+  for(int i = 0; i<GAMERULE_COUNT; i++) {
+    const struct data_type_gamerule* gamerule = &GAMERULES[i];
+    int gamerule_len = strlen(gamerule->name);
+    if(res.ast.data.word.length != gamerule_len) continue;
+    if(memcmp(context->parser.line + res.ast.data.word.start, gamerule->name, gamerule_len) != 0) continue;
+    found_gamerule = gamerule;
+    break;
+  }
+  if(found_gamerule == NULL) {
+    COMMAND_DIAGNOSTIC(context, diagnostic_error, "Provided gamerule does not exist");
+    return NULL;
+  }
+
+  context->column = context->parser.offset + 1;
+
   return NULL;
 }
 
@@ -322,7 +345,7 @@ COMMAND(__debug_test) {
 command_ast_value* load_command(struct command_load_context* context) {
   command_ast_value_result res = command_parser_word(&context->parser);
   if(res.has_error) {
-    COMMAND_DIAGNOSTIC(context, diagnostic_error, clone_string(res.error_message));
+    COMMAND_DIAGNOSTIC(context, diagnostic_error, res.error_message);
     return NULL;
   }
   int line_start = context->column;
