@@ -2,13 +2,14 @@
 #include "diagnostics.h"
 #include "analyzer.h"
 #include "../loader.h"
+#include "../memory.h"
 #include <stdlib.h>
 #include <string.h>
 
 void analyzer_add_diagnostic_range_msg_file_loc(struct analyzer_results *result, enum diagnostic_type type, const char* message, char* file, int line, int column, const char* min_version, const char* max_version) {
   if(result->diagnostics_alloc <= result->diagnostics_count) {
     result->diagnostics_alloc *= 2;
-    result->diagnostics = realloc(result->diagnostics, result->diagnostics_alloc * sizeof(struct diagnostics_info));
+    result->diagnostics = REALLOC(result->diagnostics, result->diagnostics_alloc * sizeof(struct diagnostics_info));
   }
 
   struct diagnostics_info* info = &result->diagnostics[result->diagnostics_count];

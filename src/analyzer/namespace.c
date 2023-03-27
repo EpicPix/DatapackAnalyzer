@@ -1,5 +1,6 @@
 #include "namespace.h"
 #include "../loader.h"
+#include "../memory.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +8,7 @@
 int list_namespaces(struct zip_listing_index ***result) {
   int result_count = 0;
   int alloc_count = 8;
-  *result = malloc(alloc_count * sizeof(char**));
+  *result = MALLOC(alloc_count * sizeof(char**));
 
   int entry_count = listing_index->count;
   for(int i = 0; i<entry_count; i++) {
@@ -25,7 +26,7 @@ int list_namespaces(struct zip_listing_index ***result) {
       if(valid) {
         if(result_count >= alloc_count) {
           alloc_count *= 2;
-          *result = realloc(*result, alloc_count * sizeof(char**));
+          *result = REALLOC(*result, alloc_count * sizeof(char**));
         }
         (*result)[result_count++] = entry;
       }
@@ -38,7 +39,7 @@ int list_namespaces(struct zip_listing_index ***result) {
 int list_namespace_files(const char* namespace, char* loc, struct zip_listing_index ***result) {
   int result_count = 0;
   int alloc_count = 8;
-  *result = malloc(alloc_count * sizeof(char**));
+  *result = MALLOC(alloc_count * sizeof(char**));
   int namespace_length = strlen(namespace);
   int loc_length = strlen(loc);
   int min_len = 5 + namespace_length + loc_length;
@@ -55,7 +56,7 @@ int list_namespace_files(const char* namespace, char* loc, struct zip_listing_in
         memcmp(ename + 5 + namespace_length, loc, loc_length) == 0) {
       if(result_count >= alloc_count) {
         alloc_count *= 2;
-        *result = realloc(*result, alloc_count * sizeof(char**));
+        *result = REALLOC(*result, alloc_count * sizeof(char**));
       }
       (*result)[result_count++] = entry;
     }
@@ -68,7 +69,7 @@ char* namespace_file_string(const char *namespace_name, const char *file_name) {
   int namespace_len = strlen(namespace_name);
   int filename_len = strlen(file_name);
 
-  char* lookup = malloc(5 + namespace_len + 1 + filename_len + 1);
+  char* lookup = MALLOC(5 + namespace_len + 1 + filename_len + 1);
   memcpy(lookup, "data/", 5);
   memcpy(lookup + 5, namespace_name, namespace_len);
   lookup[5 + namespace_len] = '/';
@@ -81,13 +82,13 @@ char* namespace_file_string(const char *namespace_name, const char *file_name) {
 int64_t namespace_file_size(const char *namespace_name, const char *file_name) {
   char* lookup = namespace_file_string(namespace_name, file_name);
   int size = file_size(lookup);
-  free(lookup);
+  FREE(lookup);
   return size;
 }
 
 char* namespace_file_content(const char *namespace_name, const char *file_name) {
   char* lookup = namespace_file_string(namespace_name, file_name);
   char* content = load_file(lookup);
-  free(lookup);
+  FREE(lookup);
   return content;
 }

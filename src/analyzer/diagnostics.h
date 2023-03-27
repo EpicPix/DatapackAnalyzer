@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "analyzer_diagnostics.h"
+#include "../memory.h"
 
 enum diagnostic_type {
   diagnostic_info = 0,

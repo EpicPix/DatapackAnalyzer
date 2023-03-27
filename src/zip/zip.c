@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "../loader.h"
+#include "../memory.h"
 
 static inline void read_value_valid(uint32_t index, uint32_t max) {
   if(index >= max) {
@@ -62,7 +63,7 @@ void zip_open(const char* filename) {
 
   int result_count = 0;
   int alloc_count = 8;
-  listing_index = malloc(sizeof(struct zip_listing_index_list) + alloc_count * sizeof(struct zip_listing_index));
+  listing_index = MALLOC(sizeof(struct zip_listing_index_list) + alloc_count * sizeof(struct zip_listing_index));
   int offset = 0;
 
   uint32_t header = read_value_32(mapped_file, offset + 0, st.st_size);
@@ -78,7 +79,7 @@ void zip_open(const char* filename) {
 
       if(result_count >= alloc_count) {
         alloc_count *= 2;
-        listing_index = realloc(listing_index, sizeof(struct zip_listing_index_list) + alloc_count * sizeof(struct zip_listing_index));
+        listing_index = REALLOC(listing_index, sizeof(struct zip_listing_index_list) + alloc_count * sizeof(struct zip_listing_index));
       }
       struct zip_listing_index* entry = &listing_index->indexes[result_count++];
       entry->size = decompressed_size;
@@ -109,10 +110,10 @@ void zip_close() {
   if(listing_index) {
     for(int i = 0; i < listing_index->count; i++) {
       if(listing_index->indexes[i].decompressed_data) {
-        free(listing_index->indexes[i].decompressed_data);
+        FREE(listing_index->indexes[i].decompressed_data);
       }
     }
-    free(listing_index);
+    FREE(listing_index);
   }
   munmap(zip_file_map, zip_file_mapped_length);
   close(zip_fd);

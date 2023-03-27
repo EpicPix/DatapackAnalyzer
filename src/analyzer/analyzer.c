@@ -1,6 +1,7 @@
 #include "analyzer.h"
 #include "diagnostics.h"
 #include "analyzer_diagnostics.h"
+#include "../memory.h"
 #include "namespace.h"
 #include "data/data.h"
 #include "../loader.h"
@@ -9,12 +10,12 @@
 #include <string.h>
 
 struct analyzer_results *analyze_datapack() {
-  struct analyzer_results *results = malloc(sizeof(struct analyzer_results));
+  struct analyzer_results *results = MALLOC(sizeof(struct analyzer_results));
   results->diagnostics_count = 0;
   results->diagnostics_alloc = 8;
-  results->diagnostics = malloc(8 * sizeof(struct diagnostics_info));
+  results->diagnostics = MALLOC(8 * sizeof(struct diagnostics_info));
 
-  struct analysis_data* analysis = malloc(sizeof(struct analysis_data));
+  struct analysis_data* analysis = MALLOC(sizeof(struct analysis_data));
 
   int pack_format = get_pack_format();
   const char* start_fail = NULL;
@@ -94,9 +95,9 @@ struct analyzer_results *analyze_datapack() {
       load_structures(namespace, analysis, results);
     }
   }
-  free(result);
+  FREE(result);
 
-  free(analysis);
+  FREE(analysis);
 
   return results;
 };

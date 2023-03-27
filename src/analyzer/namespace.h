@@ -12,7 +12,7 @@ int list_namespace_files(const char* namespace_name, char* loc, struct zip_listi
     struct zip_listing_index* entry = res[i]; \
     exec; \
   } \
-  free(res); \
+  FREE(res); \
 }
 
 #define namespace_file_exists(namespace_name, file_name) (namespace_file_size(namespace_name, file_name) != -1)

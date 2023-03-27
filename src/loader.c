@@ -1,4 +1,5 @@
 #include "loader.h"
+#include "memory.h"
 #include <json-c/json.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,14 +27,14 @@ char *load_file_entry(struct zip_listing_index* index) {
   if(index->decompressed_data) return index->decompressed_data;
 
   if((index->flags & 8) == 0) {
-    char* decompressed_data = malloc(index->size + 1);
+    char* decompressed_data = MALLOC(index->size + 1);
     memcpy(decompressed_data, index->compressed_data, index->size);
     decompressed_data[index->size] = '\0';
     index->decompressed_data = decompressed_data;
     return decompressed_data;
   }
 
-  void* decompressed_data = malloc(index->size + 1);
+  void* decompressed_data = MALLOC(index->size + 1);
   z_stream stream = {
       .zalloc = Z_NULL,
       .zfree = Z_NULL,
@@ -68,7 +69,7 @@ char *load_file_entry(struct zip_listing_index* index) {
 
 void unload_file_entry(struct zip_listing_index* index) {
   if(index->decompressed_data) {
-    free(index->decompressed_data);
+    FREE(index->decompressed_data);
     index->decompressed_data = NULL;
   }
 }
@@ -107,14 +108,14 @@ int file_size(const char* filename) {
 
 char* clone_string(const char* data) {
   if(data == NULL) return NULL;
-  char* res = malloc(strlen(data) + 1);
+  char* res = MALLOC(strlen(data) + 1);
   strcpy(res, data);
   return res;
 }
 
 char* clone_string_len(const char* data, int len) {
   if(data == NULL) return NULL;
-  char* res = malloc(len + 1);
+  char* res = MALLOC(len + 1);
   memcpy(res, data, len);
   res[len] = '\0';
   return res;

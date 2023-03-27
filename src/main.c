@@ -8,6 +8,7 @@
 #include <string.h>
 #include "write_file.h"
 #include "zip/zip.h"
+#include "memory.h"
 
 void write_results(struct analyzer_results* results, struct file_result_data *file) {
   write32(file, VERSION_COUNT);
@@ -24,7 +25,7 @@ void write_results(struct analyzer_results* results, struct file_result_data *fi
     write16(file, diagnostic->max_version);
     writestr(file, diagnostic->message);
     writestr(file, diagnostic->source.filename);
-    if(diagnostic->source.filename) free(diagnostic->source.filename);
+    if(diagnostic->source.filename) FREE(diagnostic->source.filename);
     write32(file, diagnostic->source.line);
     write32(file, diagnostic->source.column);
   }
@@ -40,7 +41,7 @@ int main(int argc, char **argv) {
   FILE* result_fd = (result_file != NULL && strcmp(result_file, "-") != 0) ? fopen(result_file, "w") : NULL;
   struct file_result_data* result_data = NULL;
   if(result_fd) {
-    result_data = calloc(sizeof(struct file_result_data), 1);
+    result_data = CALLOC(sizeof(struct file_result_data));
     result_data->file = result_fd;
   }
 
@@ -59,18 +60,18 @@ int main(int argc, char **argv) {
 
       if(diagnostic->source.filename != NULL) {
         printf("- %d %s..%s: %s, %s:%d:%d\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message, diagnostic->source.filename, diagnostic->source.line, diagnostic->source.column);
-        free(diagnostic->source.filename);
+        FREE(diagnostic->source.filename);
       }else {
         printf("- %d %s..%s: %s\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message);
       }
     }
   }
-  free(results->diagnostics);
-  free(results);
+  FREE(results->diagnostics);
+  FREE(results);
 
   if(result_data) {
     write_flush(result_data);
-    free(result_data);
+    FREE(result_data);
   }
   zip_close();
   if(result_fd) {
