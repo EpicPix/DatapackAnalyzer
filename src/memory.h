@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#ifndef PRINT_ALLOC
+#ifndef DEBUG_ALLOC
 
 #define MALLOC(N) zmalloc(N)
 #define CALLOC(N) zcalloc(N)

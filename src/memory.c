@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifndef PRINT_ALLOC
+#ifndef DEBUG_ALLOC
 void* zmalloc(uint64_t length) {
   return malloc(length);
 }
@@ -17,7 +17,7 @@ void* zmalloc(uint64_t length, const char* file, int line) {
 }
 #endif
 
-#ifndef PRINT_ALLOC
+#ifndef DEBUG_ALLOC
 void zfree(void* location) {
   free(location);
 }
@@ -28,7 +28,7 @@ void zfree(void* location, const char* file, int line) {
 }
 #endif
 
-#ifndef PRINT_ALLOC
+#ifndef DEBUG_ALLOC
 void* zcalloc(uint64_t length) {
   return calloc(length, 1);
 }
@@ -42,7 +42,7 @@ void* zcalloc(uint64_t length, const char* file, int line) {
 #endif
 
 
-#ifndef PRINT_ALLOC
+#ifndef DEBUG_ALLOC
 void* zrealloc(void* location, uint64_t length) {
   return realloc(location, length);
 }
