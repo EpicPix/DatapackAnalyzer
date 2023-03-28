@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
     write_flush(result_data);
     FREE(result_data);
   }
+  file_data_cleanup();
   zip_close();
   if(result_fd) {
     fclose(result_fd);

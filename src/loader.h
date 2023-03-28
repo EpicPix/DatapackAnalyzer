@@ -9,7 +9,6 @@ struct zip_listing_index {
   int size;
   int compressed_size;
   void* compressed_data;
-  void* decompressed_data;
   unsigned int filename_size;
   int flags;
 };
@@ -23,9 +22,10 @@ extern struct zip_listing_index_list* listing_index;
 
 struct zip_listing_index* get_file_info(const char* filename);
 
+void file_data_cleanup();
+
 char *load_file(const char *file);
 char *load_file_entry(struct zip_listing_index* index);
-void unload_file_entry(struct zip_listing_index* index);
 
 json_object *get_file_json(const char *filename);
 int get_pack_format();

@@ -85,7 +85,6 @@ void zip_open(const char* filename) {
       entry->size = decompressed_size;
       entry->compressed_size = decompressed_size;
       entry->compressed_data = data_location;
-      entry->decompressed_data = NULL;
       entry->filename = (const char*) (mapped_file + offset + 30);
       entry->filename_size = filename_length;
       entry->flags = compression;
@@ -108,11 +107,6 @@ void zip_open(const char* filename) {
 
 void zip_close() {
   if(listing_index) {
-    for(int i = 0; i < listing_index->count; i++) {
-      if(listing_index->indexes[i].decompressed_data) {
-        FREE(listing_index->indexes[i].decompressed_data);
-      }
-    }
     FREE(listing_index);
   }
   munmap(zip_file_map, zip_file_mapped_length);

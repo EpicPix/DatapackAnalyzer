@@ -23,18 +23,34 @@ char *load_file(const char *filename) {
   return load_file_entry(index);
 }
 
-char *load_file_entry(struct zip_listing_index* index) {
-  if(index->decompressed_data) return index->decompressed_data;
+static int file_data_length = -1;
+static char* file_data = NULL;
 
+void file_data_cleanup() {
+  if(file_data) {
+    FREE(file_data);
+    file_data = NULL;
+    file_data_length = -1;
+  }
+}
+
+static inline void file_data_validate_length(int minimum) {
+  if(file_data_length < minimum) {
+    file_data_length = minimum;
+    if(file_data) FREE(file_data);
+    file_data = MALLOC(minimum);
+  }
+}
+
+// only one file at a time, don't try to parse 2 files at once
+char *load_file_entry(struct zip_listing_index* index) {
+  file_data_validate_length(index->size + 1);
   if((index->flags & 8) == 0) {
-    char* decompressed_data = MALLOC(index->size + 1);
-    memcpy(decompressed_data, index->compressed_data, index->size);
-    decompressed_data[index->size] = '\0';
-    index->decompressed_data = decompressed_data;
-    return decompressed_data;
+    memcpy(file_data, index->compressed_data, index->size);
+    file_data[index->size] = '\0';
+    return file_data;
   }
 
-  void* decompressed_data = MALLOC(index->size + 1);
   z_stream stream = {
       .zalloc = Z_NULL,
       .zfree = Z_NULL,
@@ -50,7 +66,7 @@ char *load_file_entry(struct zip_listing_index* index) {
   stream.avail_in = index->compressed_size;
   stream.next_in = index->compressed_data;
   stream.avail_out = index->size;
-  stream.next_out = decompressed_data;
+  stream.next_out = (void*) file_data;
   ret = inflate(&stream, Z_FINISH);
   if(ret != Z_STREAM_END) {
     fprintf(stderr, "Inflate failed: %s\n", zError(ret));
@@ -61,17 +77,9 @@ char *load_file_entry(struct zip_listing_index* index) {
     fprintf(stderr, "Inflate end failed: %s\n", zError(ret));
     exit(1);
   }
-  ((char*)decompressed_data)[index->size] = '\0';
-  index->decompressed_data = decompressed_data;
+  file_data[index->size] = '\0';
 
-  return decompressed_data;
-}
-
-void unload_file_entry(struct zip_listing_index* index) {
-  if(index->decompressed_data) {
-    FREE(index->decompressed_data);
-    index->decompressed_data = NULL;
-  }
+  return file_data;
 }
 
 json_object *get_file_json(const char *filename) {
