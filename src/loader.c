@@ -37,8 +37,8 @@ void file_data_cleanup() {
 static inline void file_data_validate_length(int minimum) {
   if(file_data_length < minimum) {
     file_data_length = minimum;
-    if(file_data) FREE(file_data);
-    file_data = MALLOC(minimum);
+    if(file_data) file_data = REALLOC(file_data, minimum);
+    else file_data = MALLOC(minimum);
   }
 }
 
