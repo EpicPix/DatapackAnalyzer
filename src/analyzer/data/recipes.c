@@ -1,10 +1,17 @@
 #include "data.h"
 #include "../namespace.h"
 
-void load_recipe(struct zip_listing_index* namespace_index, struct zip_listing_index* entry, struct analysis_data *data, struct analyzer_results *results) {
+struct info_data {
+  struct zip_listing_index* namespace_index;
+  struct analysis_data *data;
+  struct analyzer_results *results;
+};
+
+void load_recipe(struct zip_listing_index* index, void* args) {
 
 };
 
 void load_recipes(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results) {
-  list_namespace_files_foreach(namespace_index, "recipes/", load_recipe(namespace_index, entry, data, results));
+  struct info_data d = { .namespace_index = namespace_index, .data = data, .results = results };
+  list_namespace_files_foreach(namespace_index, "recipes/", load_recipe, &d);
 };

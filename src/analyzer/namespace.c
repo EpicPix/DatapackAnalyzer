@@ -5,11 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int list_namespaces(struct zip_listing_index ***result) {
-  int result_count = 0;
-  int alloc_count = 8;
-  *result = MALLOC(alloc_count * sizeof(char**));
-
+void list_namespaces_foreach(listing_foreach_function* foreach_callback, void* args) {
   int entry_count = listing_index->count;
   for(int i = 0; i<entry_count; i++) {
     struct zip_listing_index* entry = &listing_index->indexes[i];
@@ -24,22 +20,13 @@ int list_namespaces(struct zip_listing_index ***result) {
         }
       }
       if(valid) {
-        if(result_count >= alloc_count) {
-          alloc_count *= 2;
-          *result = REALLOC(*result, alloc_count * sizeof(char**));
-        }
-        (*result)[result_count++] = entry;
+        foreach_callback(entry, args);
       }
     }
   }
-
-  return result_count;
 }
 
-int list_namespace_files(struct zip_listing_index* namespace_index, char* loc, struct zip_listing_index ***result) {
-  int result_count = 0;
-  int alloc_count = 8;
-  *result = MALLOC(alloc_count * sizeof(char**));
+void list_namespace_files_foreach(struct zip_listing_index* namespace_index, char* loc, listing_foreach_function* foreach_callback, void* args) {
   int loc_length = strlen(loc);
   int namespace_length = namespace_index->filename_size;
   int min_len = namespace_length + loc_length;
@@ -53,15 +40,9 @@ int list_namespace_files(struct zip_listing_index* namespace_index, char* loc, s
         ename[name_length - 1] != '/' &&
         memcmp(ename, namespace_index->filename, namespace_length) == 0 &&
         memcmp(ename + namespace_length, loc, loc_length) == 0) {
-      if(result_count >= alloc_count) {
-        alloc_count *= 2;
-        *result = REALLOC(*result, alloc_count * sizeof(char**));
-      }
-      (*result)[result_count++] = entry;
+      foreach_callback(entry, args);
     }
   }
-
-  return result_count;
 }
 
 void namespace_file_string_buf(const char *namespace_name, const char *file_name, char* buffer) {

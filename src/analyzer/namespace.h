@@ -1,19 +1,10 @@
 #include <stdint.h>
 #include "../loader.h"
 
-int list_namespaces(struct zip_listing_index ***result);
+typedef void(listing_foreach_function)(struct zip_listing_index*, void*);
 
-int list_namespace_files(struct zip_listing_index* namespace_index, char* loc, struct zip_listing_index ***result);
-#define list_namespace_files_foreach(namespace_index, loc, exec...) \
-{ \
-  struct zip_listing_index** res; \
-  int count = list_namespace_files(namespace_index, loc, &res); \
-  for(int i = 0; i<count; i++) { \
-    struct zip_listing_index* entry = res[i]; \
-    exec; \
-  } \
-  FREE(res); \
-}
+void list_namespaces_foreach(listing_foreach_function* foreach_callback, void* args);
+void list_namespace_files_foreach(struct zip_listing_index* namespace_index, char* loc, listing_foreach_function* foreach_callback, void* args);
 
 void namespace_file_string_buf(const char *namespace_name, const char *file_name, char* buffer);
 char* namespace_file_string(const char *namespace_name, const char *file_name);
