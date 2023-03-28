@@ -7,10 +7,10 @@
 #include <stdio.h>
 
 #define COMMAND_DIAGNOSTIC_RANGE(CONTEXT, TYPE, VALUE, MIN_VERSION, MAX_VERSION) \
-  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, clone_string(CONTEXT->filename), CONTEXT->line_number, CONTEXT->column, MIN_VERSION, MAX_VERSION)
+  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, CONTEXT->index->filename, CONTEXT->index->filename_size, CONTEXT->line_number, CONTEXT->column, MIN_VERSION, MAX_VERSION)
 
 #define COMMAND_DIAGNOSTIC(CONTEXT, TYPE, VALUE) \
-  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, clone_string(CONTEXT->filename), CONTEXT->line_number, CONTEXT->column, NULL, NULL)
+  analyzer_add_diagnostic_range_msg_file_loc(CONTEXT->results, TYPE, VALUE, CONTEXT->index->filename, CONTEXT->index->filename_size, CONTEXT->line_number, CONTEXT->column, NULL, NULL)
 
 #define COMMAND(NAME) command_ast_value* load_command_##NAME(struct command_load_context* context)
 #define CHECK_COMMAND(NAME) if(command_length == strlen(#NAME) && memcmp(line, #NAME, command_length) == 0) { return load_command_##NAME(context); }
@@ -25,8 +25,7 @@
 }
 
 struct command_load_context {
-  const char* namespace_name;
-  const char* filename;
+  struct zip_listing_index* index;
   int line_number;
   int column;
   command_parser parser;
@@ -440,13 +439,12 @@ command_ast_value* load_command(struct command_load_context* context) {
   return NULL;
 };
 
-static void command_load(const char* namespace_name, const char* filename, int line_number, int column, const char* start, int length, struct analysis_data *data, struct analyzer_results *results) {
+static void command_load(struct zip_listing_index* index, const char* filename, int line_number, int column, const char* start, int length, struct analysis_data *data, struct analyzer_results *results) {
   char* line = alloca(length + 1);
   memcpy(line, start, length);
   line[length] = '\0';
   struct command_load_context context = {
-      .namespace_name = namespace_name,
-      .filename = filename,
+      .index = index,
       .line_number = line_number,
       .column = column,
       .parser = {
@@ -463,7 +461,7 @@ static void command_load(const char* namespace_name, const char* filename, int l
   load_command(&context);
 }
 
-void load_commands(const char* namespace_name, struct zip_listing_index* index, const char* content, struct analysis_data *data, struct analyzer_results *results) {
+void load_commands(struct zip_listing_index* namespace, struct zip_listing_index* index, const char* content, struct analysis_data *data, struct analyzer_results *results) {
   char* filename = alloca(index->filename_size + 1);
   memcpy(filename, index->filename, index->filename_size);
   filename[index->filename_size] = '\0';
@@ -501,7 +499,7 @@ void load_commands(const char* namespace_name, struct zip_listing_index* index, 
     }
     int end = i;
     if(end != start) {
-      command_load(namespace_name, filename, pre_line_number, 1 + offset, content + start, end - start, data, results);
+      command_load(index, filename, pre_line_number, 1 + offset, content + start, end - start, data, results);
     }
   }
 };

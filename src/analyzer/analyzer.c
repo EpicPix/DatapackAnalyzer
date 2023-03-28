@@ -25,14 +25,14 @@ struct analyzer_results *analyze_datapack() {
       if(start_fail == NULL) start_fail = VERSIONS[v].version_name;
     }else {
       if(start_fail) {
-        analyzer_add_diagnostic_range_msg_file(results, diagnostic_warn, "Pack format does not match", clone_string("pack.mcmeta"), start_fail, NULL);
+        analyzer_add_diagnostic_range_msg_file(results, diagnostic_warn, "Pack format does not match", "pack.mcmeta", strlen("pack.mcmeta"), start_fail, NULL);
         start_fail = NULL;
       }
       end_fail = VERSIONS[v].version_name;
     }
   }
   if(end_fail) {
-    analyzer_add_diagnostic_range_msg_file(results, diagnostic_warn, "Pack format does not match", clone_string("pack.mcmeta"), NULL, end_fail);
+    analyzer_add_diagnostic_range_msg_file(results, diagnostic_warn, "Pack format does not match", "pack.mcmeta", strlen("pack.mcmeta"), NULL, end_fail);
   }
 
   struct zip_listing_index **result;
@@ -44,55 +44,57 @@ struct analyzer_results *analyze_datapack() {
     memcpy(namespace, index->filename + 5, filename_length);
     namespace[filename_length] = '\0';
 
-    if(namespace_file_exists(namespace, "damage_type/")) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'damage_type' data", namespace_file_string(namespace, "damage_type/"), NULL, "23w06a");
-      load_damage_types(namespace, analysis, results);
+    struct zip_listing_index* findex;
+
+    if((findex = namespace_file_index(namespace, "damage_type/")) != NULL) {
+      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'damage_type' data", findex->filename, findex->filename_size, NULL, "23w06a");
+      load_damage_types(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "chat_type/")) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'chat_type' data", namespace_file_string(namespace, "chat_type/"), NULL, "22w42a");
-      load_chat_types(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "chat_type/")) != NULL) {
+      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'chat_type' data", findex->filename, findex->filename_size, NULL, "22w42a");
+      load_chat_types(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "item_modifiers/")) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'item_modifiers' data", namespace_file_string(namespace, "item_modifiers/"), NULL, "20w46a");
-      load_item_modifiers(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "item_modifiers/")) != NULL) {
+      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'item_modifiers' data", findex->filename, findex->filename_size, NULL, "20w46a");
+      load_item_modifiers(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "worldgen/")) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'worldgen' data", namespace_file_string(namespace, "worldgen/"), NULL, "20w28a");
-      load_worldgens(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "worldgen/")) != NULL) {
+      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'worldgen' data", findex->filename, findex->filename_size, NULL, "20w28a");
+      load_worldgens(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "predicates/")) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'predicates' data", namespace_file_string(namespace, "predicates/"), NULL, "19w38a");
-      load_predicates(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "predicates/")) != NULL) {
+      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'predicates' data", findex->filename, findex->filename_size, NULL, "19w38a");
+      load_predicates(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "tags/")) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'tags' data", namespace_file_string(namespace, "tags/"), NULL, "17w49a");
-      load_tags(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "tags/")) != NULL) {
+      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'tags' data", findex->filename, findex->filename_size, NULL, "17w49a");
+      load_tags(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "recipes/")) {
-      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'recipes' data", namespace_file_string(namespace, "recipes/"), NULL, "17w48a");
-      load_recipes(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "recipes/")) != NULL) {
+      analyzer_add_diagnostic_range_msg_file(results, diagnostic_error, "Unable to use 'recipes' data", findex->filename, findex->filename_size, NULL, "17w48a");
+      load_recipes(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "advancements/")) {
-      load_advancements(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "advancements/")) != NULL) {
+      load_advancements(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "functions/")) {
-      load_functions(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "functions/")) != NULL) {
+      load_functions(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "loot_tables/")) {
-      load_loot_tables(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "loot_tables/")) != NULL) {
+      load_loot_tables(index, analysis, results);
     }
 
-    if(namespace_file_exists(namespace, "structures/")) {
-      load_structures(namespace, analysis, results);
+    if((findex = namespace_file_index(namespace, "structures/")) != NULL) {
+      load_structures(index, analysis, results);
     }
   }
   FREE(result);

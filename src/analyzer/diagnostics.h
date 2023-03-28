@@ -10,7 +10,8 @@ enum diagnostic_type {
 };
 
 struct diagnostics_source_info {
-  char* filename;
+  const char* filename;
+  int filename_length;
   int line;
   int column;
 };
@@ -22,7 +23,3 @@ struct diagnostics_info {
   const char* message;
   struct diagnostics_source_info source;
 };
-
-struct diagnostics_info* diagnostic_create_source(enum diagnostic_type type, const char* message, char* file, const char* min_version, const char* max_version);
-struct diagnostics_info* diagnostic_create_source_dyn(enum diagnostic_type type, const char* message, char* file, const char* min_version, const char* max_version);
-struct diagnostics_info* diagnostic_create_source_loc(enum diagnostic_type type, const char* message, char* file, int line, int column, const char* min_version, const char* max_version);

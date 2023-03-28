@@ -36,13 +36,13 @@ int list_namespaces(struct zip_listing_index ***result) {
   return result_count;
 }
 
-int list_namespace_files(const char* namespace, char* loc, struct zip_listing_index ***result) {
+int list_namespace_files(struct zip_listing_index* namespace_index, char* loc, struct zip_listing_index ***result) {
   int result_count = 0;
   int alloc_count = 8;
   *result = MALLOC(alloc_count * sizeof(char**));
-  int namespace_length = strlen(namespace);
   int loc_length = strlen(loc);
-  int min_len = 5 + namespace_length + loc_length;
+  int namespace_length = namespace_index->filename_size;
+  int min_len = namespace_length + loc_length;
 
   int entry_count = listing_index->count;
   for(int i = 0; i<entry_count; i++) {
@@ -51,9 +51,8 @@ int list_namespace_files(const char* namespace, char* loc, struct zip_listing_in
     int name_length = entry->filename_size;
     if(name_length > min_len &&
         ename[name_length - 1] != '/' &&
-        memcmp(ename, "data/", 5) == 0 &&
-        memcmp(ename + 5, namespace, namespace_length) == 0 &&
-        memcmp(ename + 5 + namespace_length, loc, loc_length) == 0) {
+        memcmp(ename, namespace_index->filename, namespace_length) == 0 &&
+        memcmp(ename + namespace_length, loc, loc_length) == 0) {
       if(result_count >= alloc_count) {
         alloc_count *= 2;
         *result = REALLOC(*result, alloc_count * sizeof(char**));
@@ -63,6 +62,17 @@ int list_namespace_files(const char* namespace, char* loc, struct zip_listing_in
   }
 
   return result_count;
+}
+
+void namespace_file_string_buf(const char *namespace_name, const char *file_name, char* buffer) {
+  int namespace_len = strlen(namespace_name);
+  int filename_len = strlen(file_name);
+
+  memcpy(buffer, "data/", 5);
+  memcpy(buffer + 5, namespace_name, namespace_len);
+  buffer[5 + namespace_len] = '/';
+  memcpy(buffer + 6 + namespace_len, file_name, filename_len);
+  buffer[5 + namespace_len + 1 + filename_len] = '\0';
 }
 
 char* namespace_file_string(const char *namespace_name, const char *file_name) {
@@ -79,16 +89,18 @@ char* namespace_file_string(const char *namespace_name, const char *file_name) {
   return lookup;
 }
 
-int64_t namespace_file_size(const char *namespace_name, const char *file_name) {
-  char* lookup = namespace_file_string(namespace_name, file_name);
-  int size = file_size(lookup);
-  FREE(lookup);
-  return size;
+struct zip_listing_index* namespace_file_index(const char *namespace_name, const char *file_name) {
+  char* lookup = alloca(strlen(namespace_name) + strlen(file_name) + 7);
+  namespace_file_string_buf(namespace_name, file_name, lookup);
+  return get_file_info(lookup);
 }
 
-char* namespace_file_content(const char *namespace_name, const char *file_name) {
-  char* lookup = namespace_file_string(namespace_name, file_name);
-  char* content = load_file(lookup);
-  FREE(lookup);
-  return content;
+struct zip_listing_index* namespace_file_index_by_index(struct zip_listing_index* namespace, const char *file_name) {
+  int filename_len = strlen(file_name);
+
+  char* lookup = alloca(namespace->filename_size + filename_len + 1);
+  memcpy(lookup, namespace->filename, namespace->filename_size);
+  memcpy(lookup + namespace->filename_size, file_name, filename_len);
+  lookup[namespace->filename_size + filename_len] = '\0';
+  return get_file_info(lookup);
 }

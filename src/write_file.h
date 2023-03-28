@@ -40,10 +40,10 @@ struct file_result_data {
   RESULT->data[RESULT->index++] = VALUE >> 24; \
 }
 
-#define writestr(RESULT, VALUE) { \
+#define writestrlen(RESULT, VALUE, LENGTH) { \
   const char* val = VALUE; \
   if(val != NULL) { \
-    int len = strlen(val); \
+    int len = LENGTH; \
     write_ensure_space(RESULT, 2 + len); \
     RESULT->data[RESULT->index++] = len; \
     RESULT->data[RESULT->index++] = len >> 8; \
@@ -51,3 +51,4 @@ struct file_result_data {
     RESULT->index += len; \
   } else write16(RESULT, 0); \
 }
+#define writestr(RESULT, VALUE) writestrlen(RESULT, VALUE, strlen(val))

@@ -21,6 +21,8 @@ struct zip_listing_index_list {
 
 extern struct zip_listing_index_list* listing_index;
 
+struct zip_listing_index* get_file_info(const char* filename);
+
 char *load_file(const char *file);
 char *load_file_entry(struct zip_listing_index* index);
 void unload_file_entry(struct zip_listing_index* index);

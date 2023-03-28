@@ -24,10 +24,24 @@ void write_results(struct analyzer_results* results, struct file_result_data *fi
     write16(file, diagnostic->min_version);
     write16(file, diagnostic->max_version);
     writestr(file, diagnostic->message);
-    writestr(file, diagnostic->source.filename);
-    if(diagnostic->source.filename) FREE(diagnostic->source.filename);
+    writestrlen(file, diagnostic->source.filename, diagnostic->source.filename_length);
     write32(file, diagnostic->source.line);
     write32(file, diagnostic->source.column);
+  }
+}
+
+void print_diagnostic(struct diagnostics_info* diagnostic) {
+  const struct version_info* min = version_from_index(diagnostic->min_version);
+  const struct version_info* max = version_from_index(diagnostic->max_version);
+
+  if(diagnostic->source.filename != NULL) {
+    char* filename = alloca(diagnostic->source.filename_length + 1);
+    memcpy(filename, diagnostic->source.filename, diagnostic->source.filename_length);
+    filename[diagnostic->source.filename_length] = '\0';
+
+    printf("- %d %s..%s: %s, %s:%d:%d\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message, filename, diagnostic->source.line, diagnostic->source.column);
+  }else {
+    printf("- %d %s..%s: %s\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message);
   }
 }
 
@@ -53,17 +67,7 @@ int main(int argc, char **argv) {
     write_results(results, result_data);
   }else {
     for(int i = 0; i<results->diagnostics_count; i++) {
-      struct diagnostics_info* diagnostic = &results->diagnostics[i];
-
-      const struct version_info* min = version_from_index(diagnostic->min_version);
-      const struct version_info* max = version_from_index(diagnostic->max_version);
-
-      if(diagnostic->source.filename != NULL) {
-        printf("- %d %s..%s: %s, %s:%d:%d\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message, diagnostic->source.filename, diagnostic->source.line, diagnostic->source.column);
-        FREE(diagnostic->source.filename);
-      }else {
-        printf("- %d %s..%s: %s\n", diagnostic->type, min ? min->version_name : "", max ? max->version_name : "", diagnostic->message);
-      }
+      print_diagnostic(&results->diagnostics[i]);
     }
   }
   FREE(results->diagnostics);

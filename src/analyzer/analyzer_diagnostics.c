@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void analyzer_add_diagnostic_range_msg_file_loc(struct analyzer_results *result, enum diagnostic_type type, const char* message, char* file, int line, int column, const char* min_version, const char* max_version) {
+void analyzer_add_diagnostic_range_msg_file_loc(struct analyzer_results *result, enum diagnostic_type type, const char* message, const char* file, int filename_length, int line, int column, const char* min_version, const char* max_version) {
   if(result->diagnostics_alloc <= result->diagnostics_count) {
     result->diagnostics_alloc *= 2;
     result->diagnostics = REALLOC(result->diagnostics, result->diagnostics_alloc * sizeof(struct diagnostics_info));
@@ -18,16 +18,17 @@ void analyzer_add_diagnostic_range_msg_file_loc(struct analyzer_results *result,
   info->max_version = version_index(max_version);
   info->message = message;
   info->source.filename = file;
+  info->source.filename_length = filename_length;
   info->source.line = line;
   info->source.column = column;
 
   result->diagnostics_count++;
 }
 
-void analyzer_add_diagnostic_range_msg_file(struct analyzer_results *results, enum diagnostic_type type, const char* message, char* file, const char* min_version, const char* max_version) {
-  analyzer_add_diagnostic_range_msg_file_loc(results, type, message, file, -1, -1, min_version, max_version);
+void analyzer_add_diagnostic_range_msg_file(struct analyzer_results *results, enum diagnostic_type type, const char* message, const char* file, int filename_length, const char* min_version, const char* max_version) {
+  analyzer_add_diagnostic_range_msg_file_loc(results, type, message, file, filename_length, -1, -1, min_version, max_version);
 }
 
 void analyzer_add_diagnostic_range_msg(struct analyzer_results *results, enum diagnostic_type type, const char* message, const char* min_version, const char* max_version) {
-  analyzer_add_diagnostic_range_msg_file_loc(results, type, message, NULL, -1, -1, min_version, max_version);
+  analyzer_add_diagnostic_range_msg_file_loc(results, type, message, NULL, 0, -1, -1, min_version, max_version);
 }

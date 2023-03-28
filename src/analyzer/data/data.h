@@ -7,14 +7,14 @@ struct analysis_data {
 
 };
 
-void load_advancements(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_chat_types(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_damage_types(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_functions(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_item_modifiers(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_loot_tables(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_predicates(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_recipes(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_structures(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_tags(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
-void load_worldgens(const char* namespace_name, struct analysis_data *data, struct analyzer_results *results);
+void load_advancements(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_chat_types(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_damage_types(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_functions(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_item_modifiers(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_loot_tables(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_predicates(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_recipes(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_structures(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_tags(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
+void load_worldgens(struct zip_listing_index* namespace_index, struct analysis_data *data, struct analyzer_results *results);
