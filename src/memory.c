@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef DEBUG_ALLOC
+int memory_total_allocated = 0;
+#endif
+
 #ifndef DEBUG_ALLOC
 void* zmalloc(uint64_t length) {
   return malloc(length);
@@ -13,6 +17,7 @@ void* zmalloc(uint64_t length, const char* file, int line) {
   fprintf(stderr, "%s:%d zmalloc(%lu) = ", file, line, length);
   void* ptr = malloc(length);
   fprintf(stderr, "%p\n", ptr);
+  memory_total_allocated += length;
   return ptr;
 }
 #endif
@@ -37,6 +42,7 @@ void* zcalloc(uint64_t length, const char* file, int line) {
   fprintf(stderr, "%s:%d zcalloc(%lu) = ", file, line, length);
   void* ptr = calloc(length, 1);
   fprintf(stderr, "%p\n", ptr);
+  memory_total_allocated += length;
   return ptr;
 }
 #endif
@@ -51,6 +57,7 @@ void* zrealloc(void* location, uint64_t length, const char* file, int line) {
   fprintf(stderr, "%s:%d zrealloc(%p, %lu) = ", file, line, location, length);
   void* ptr = realloc(location, length);
   fprintf(stderr, "%p\n", ptr);
+  memory_total_allocated += length;
   return ptr;
 }
 #endif

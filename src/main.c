@@ -81,5 +81,10 @@ int main(int argc, char **argv) {
   if(result_fd) {
     fclose(result_fd);
   }
+
+#ifdef DEBUG_ALLOC
+  printf("Total memory allocated: %d B (%.4f MiB)\n", memory_total_allocated, (double) memory_total_allocated / 1024. / 1024.);
+#endif
+
   return 0;
 }
